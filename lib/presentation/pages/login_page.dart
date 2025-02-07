@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/pages/register_page.dart';
-import 'package:untitled/widgets/logo.dart';
+import 'package:untitled/presentation/pages/register_page.dart';
+
+import '../widgets/logo.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   State<StatefulWidget> createState() {
     return LoginPageState();
@@ -112,10 +115,7 @@ class LoginPageState extends State<LoginPage>{
             const SizedBox(height: 20,),
             TextButton(
                 onPressed: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => RegisterPage()),
-                  );
+                  //xử lý quên mật khẩu
                 },
                 child: const Text(
                   'Quên mật khẩu của bạn ?',
@@ -139,7 +139,10 @@ class LoginPageState extends State<LoginPage>{
                 ),
                 TextButton(
                     onPressed: (){
-                      //Xử lý logic
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RegisterPage()),
+                      );
                     },
                     child: const Text('Đăng ký ngay',
                     style: TextStyle(

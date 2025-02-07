@@ -5,6 +5,8 @@ import 'login_page.dart';
 import 'register_page.dart';
 
 class StartPage extends StatefulWidget{
+  const StartPage({super.key});
+
   @override
   State<StatefulWidget> createState() {
     return StartPageState();
@@ -29,7 +31,7 @@ class StartPageState  extends State<StartPage>{
                   TextSpan(
                     children: <TextSpan>[
                       TextSpan(
-                        text: 'MelodiFlow',
+                        text: 'Spotify',
                         style: TextStyle(
                           fontStyle: FontStyle.italic,
                           color: Colors.white,
@@ -55,7 +57,7 @@ class StartPageState  extends State<StartPage>{
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -72,7 +74,7 @@ class StartPageState  extends State<StartPage>{
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => RegisterPage()),
+                  MaterialPageRoute(builder: (context) => const RegisterPage()),
                 );
               },
               style: ElevatedButton.styleFrom(

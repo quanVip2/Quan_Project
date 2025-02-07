@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+
 import '../widgets/logo.dart';
 
+
 class RegisterPage extends StatefulWidget{
+  const RegisterPage({super.key});
+
   @override
   State<StatefulWidget> createState() {
     return RegisterPageSate();
