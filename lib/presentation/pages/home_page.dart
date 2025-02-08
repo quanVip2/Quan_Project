@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/album_card.dart';
+import '../widgets/song_card.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -37,13 +40,13 @@ class HomePageState extends State<HomePage> {
           SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Container(
-              child: SafeArea(
+              child: const SafeArea(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 40),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -92,46 +95,196 @@ class HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
+                    ),
+                    SizedBox(height: 32),
+                    Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            "Good evening",
+                          ),
+                          SizedBox(height: 16),
+                          Row(
+                            children: [
+                              RowAlbumCard(
+                                label: "Top 50 - Global",
+                                image: AssetImage("assets/image/album7.jpg"),
+                              ),
+                              SizedBox(width: 16),
+                              RowAlbumCard(
+                                label: "Best Mode",
+                                image: AssetImage("assets/image/album1.jpg"),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 16),
+                          Row(
+                            children: [
+                              RowAlbumCard(
+                                label: "RapCaviar",
+                                image: AssetImage("assets/image/album2.jpg"),
+                              ),
+                              SizedBox(width: 16),
+                              RowAlbumCard(
+                                label: "Eminem",
+                                image: AssetImage("assets/image/album5.jpg"),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 16),
+                          Row(
+                            children: [
+                              RowAlbumCard(
+                                label: "Top 50 - USA",
+                                image: AssetImage("assets/image/album4.jpg"),
+                              ),
+                              SizedBox(width: 16),
+                              RowAlbumCard(
+                                label: "Pop Remix",
+                                image: AssetImage("assets/image/album3.jpg"),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(
+                            "Based on your recent listening",
+                          ),
+                        ),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: BouncingScrollPhysics(),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20,
+                          ),
+                          child: Row(
+                            children: [
+                              SongCard(
+                                image: AssetImage("assets/image/album2.jpg"),
+                              ),
+                              SizedBox(width: 16),
+                              SongCard(
+                                image: AssetImage("assets/image/album6.jpg"),
+                              ),
+                              SizedBox(width: 16),
+                              SongCard(
+                                image: AssetImage("assets/image/album3.jpg"),
+                              ),
+                              SizedBox(width: 16),
+                              SongCard(
+                                image: AssetImage("assets/image/album4.jpg"),
+                              ),
+                              SizedBox(width: 16),
+                              SongCard(
+                                image: AssetImage("assets/image/album5.jpg"),
+                              ),
+                              SizedBox(width: 16),
+                              SongCard(
+                                image: AssetImage("assets/image/album1.jpg"),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 16,),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(
+                            "Recommend for you",
+                          ),
+                        ),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: BouncingScrollPhysics(),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20,
+                          ),
+                          child: Row(
+                            children: [
+                              SongCard(
+                                image: AssetImage("assets/image/album2.jpg"),
+                              ),
+                              SizedBox(width: 16),
+                              SongCard(
+                                image: AssetImage("assets/image/album6.jpg"),
+                              ),
+                              SizedBox(width: 16),
+                              SongCard(
+                                image: AssetImage("assets/image/album3.jpg"),
+                              ),
+                              SizedBox(width: 16),
+                              SongCard(
+                                image: AssetImage("assets/image/album4.jpg"),
+                              ),
+                              SizedBox(width: 16),
+                              SongCard(
+                                image: AssetImage("assets/image/album5.jpg"),
+                              ),
+                              SizedBox(width: 16),
+                              SongCard(
+                                image: AssetImage("assets/image/album1.jpg"),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ],
                 ),
               ),
             ),
           ),
-
-
         ],
       ),
     );
   }
 }
 
-class AlbumCard extends StatelessWidget{
-  final ImageProvider image;
+class RowAlbumCard extends StatelessWidget{
+  final AssetImage image;
   final String label;
-  final double size;
-  // final Function onTap;
 
-  const AlbumCard({Key? key, required this.image, required this.label, this.size = 120,   }) : super(key:key);
+  const RowAlbumCard({super.key, required this.image, required this.label});
+
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Image(
-          image: image,
-          width: size,
-          height: size,
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white10,
+          borderRadius: BorderRadius.circular(14),
         ),
-        SizedBox(height: 10),
-        Text(label),
-      ],
+        clipBehavior: Clip.antiAlias,
+        child: Row(
+          children: [
+            Image(image: image,
+            height: 50,
+            width: 50,
+            fit: BoxFit.cover,),
+            const SizedBox(width: 8,),
+            Text(label)
+          ],
+        ),
+      ),
     );
   }
 
 }
+
+
 
 
 
