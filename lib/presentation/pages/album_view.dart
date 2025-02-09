@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
-
+import '../../core/theme/app_pallete.dart';
 import '../widgets/album_card.dart';
 
 class AlbumView extends StatefulWidget {
@@ -12,7 +11,6 @@ class AlbumView extends StatefulWidget {
 }
 
 class _AlbumViewState extends State<AlbumView> {
-  late Color randomColor;
   late ScrollController scrollController;
   double imageSize = 0;
   double initialSize = 240;
@@ -44,16 +42,6 @@ class _AlbumViewState extends State<AlbumView> {
         setState(() {});
       });
     super.initState();
-    randomColor = generateRandomColor();
-  }
-
-  Color generateRandomColor() {
-    return Color.fromRGBO(
-      Random().nextInt(256),
-      Random().nextInt(256),
-      Random().nextInt(256),
-      1.0,
-    );
   }
 
   @override
@@ -66,7 +54,7 @@ class _AlbumViewState extends State<AlbumView> {
             height: containerHeight,
             width: MediaQuery.of(context).size.width,
             alignment: Alignment.center,
-            color: randomColor,
+            color: Pallete.randomColor,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

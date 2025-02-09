@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class Pallete {
@@ -7,5 +9,10 @@ class Pallete {
   static const darkBackground = Color(0xFF1A1B1D);
   static const grey = Color(0xFF61646E);
   static const darkGrey = Color(0xFF34353B);
-
+  static Color get randomColor =>  Color.fromRGBO(
+      Random().nextInt(256),
+      Random().nextInt(256),
+      Random().nextInt(256),
+      1.0,
+    );
 }
