@@ -30,7 +30,7 @@ class _SearchPageState extends State<SearchPage> {
               ],
             )),
           ),
-          ListView(
+          SafeArea(child: ListView(
             physics: const BouncingScrollPhysics(),
             children: [
               Padding(
@@ -38,6 +38,7 @@ class _SearchPageState extends State<SearchPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    SizedBox(height: 40),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -66,7 +67,7 @@ class _SearchPageState extends State<SearchPage> {
               )
             ],
 
-          )
+          ),)
         ],
       ),
     );

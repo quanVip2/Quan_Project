@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/core/theme/chip_button.dart';
 
 import '../widgets/album_card.dart';
 import '../widgets/song_card.dart';
@@ -40,11 +41,27 @@ class HomePageState extends State<HomePage> {
           SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Container(
-              child: const SafeArea(
+              child: SafeArea(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 40),
+                    Padding(
+                      padding: EdgeInsets.all(4),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundImage: AssetImage('assets/image/album1.jpg'),
+                            ),
+                            rowChips(),
+                          ],
+                        ),
+                      ),
+                    ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
@@ -252,6 +269,16 @@ class HomePageState extends State<HomePage> {
   }
 }
 
+rowChips() {
+  return Row(
+    children: <Widget>[
+      ChipButton(label: "Tất cả", onChipClicked: (){},),
+      ChipButton(label: "Nhạc", onChipClicked: (){},),
+      ChipButton(label: "Podcasts", onChipClicked: (){},),
+    ],
+  );
+}
+
 class RowAlbumCard extends StatelessWidget{
   final AssetImage image;
   final String label;
@@ -281,7 +308,6 @@ class RowAlbumCard extends StatelessWidget{
       ),
     );
   }
-
 }
 
 
