@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/navigations/tabbar.dart';
-
-
-
+import 'package:untitled/navigations/screen_router.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,17 +19,14 @@ class MyApp extends StatelessWidget {
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Colors.white10,
           type: BottomNavigationBarType.fixed,
-          selectedLabelStyle: TextStyle(
-            fontSize: 12,
-          ),
-          unselectedLabelStyle: TextStyle(
-            fontSize: 12,
-          ),
+          selectedLabelStyle: TextStyle(fontSize: 12),
+          unselectedLabelStyle: TextStyle(fontSize: 12),
           selectedItemColor: Colors.white,
           unselectedItemColor: Colors.white38,
         ),
       ),
-      home: const Tabbar(),
+      initialRoute: AppRouter.splash,
+      onGenerateRoute: AppRouter.generateRoute,
     );
   }
 }
