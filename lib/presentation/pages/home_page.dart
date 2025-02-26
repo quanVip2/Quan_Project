@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/core/theme/chip_button.dart';
+import 'package:untitled/presentation/widgets/drawer_view.dart';
+import 'package:untitled/presentation/widgets/avatar.dart';
 
 import '../widgets/album_card.dart';
 import '../widgets/song_card.dart';
@@ -17,6 +19,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const DrawerView(),
       body: Stack(
         children: [
           // Background Container
@@ -53,10 +56,8 @@ class HomePageState extends State<HomePage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundImage: AssetImage('assets/image/album1.jpg'),
-                            ),
+                            AvatarCircle(
+                                image: AssetImage('assets/image/album1.jpg')),
                             rowChips(),
                           ],
                         ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/presentation/widgets/avatar.dart';
+import 'package:untitled/presentation/widgets/drawer_view.dart';
 import 'package:untitled/presentation/widgets/search_card.dart';
 
 import '../widgets/search_box.dart';
@@ -14,6 +16,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: DrawerView(),
       body: Stack(
         children: [
           Container(
@@ -42,7 +45,14 @@ class _SearchPageState extends State<SearchPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Search"),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            AvatarCircle(image: AssetImage('assets/image/album1.jpg')),
+                            SizedBox(width: 10,),
+                            Text("Search"),
+                          ],
+                        ),
                         Icon(Icons.camera_alt_outlined)
                       ],
                     ),

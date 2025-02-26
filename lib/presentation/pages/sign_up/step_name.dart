@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/navigations/tabbar.dart';
 import 'package:untitled/presentation/pages/home_page.dart';
 
 class SignUpNameScreen extends StatefulWidget {
@@ -171,7 +172,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const HomePage()),
+                    MaterialPageRoute(builder: (context) => const Tabbar()),
                   );
                   print("Name: ${_nameController.text}");
                   print("Opt out marketing: $_optOutMarketing");

@@ -9,7 +9,7 @@ import 'package:untitled/presentation/pages/sign_up/step_password.dart';
 import 'package:untitled/presentation/pages/sign_up/step_dob.dart';
 import 'package:untitled/presentation/pages/sign_up/step_gender.dart';
 import 'package:untitled/presentation/pages/sign_up/step_name.dart';
-import 'package:untitled/presentation/pages/home_page.dart';
+import '../navigations/tabbar.dart';
 
 class AppRouter {
   static const String start = '/';
@@ -41,18 +41,19 @@ class AppRouter {
       case signUpPassword:
         return MaterialPageRoute(builder: (_) => const SignUpPasswordScreen());
       case signUpDob:
-        return MaterialPageRoute(
-            builder: (_) => const SignUpDateOfBirthScreen());
+        return MaterialPageRoute(builder: (_) => const SignUpDateOfBirthScreen());
       case signUpGender:
         return MaterialPageRoute(builder: (_) => const SignUpGenderScreen());
       case signUpName:
         return MaterialPageRoute(builder: (_) => const SignUpNameScreen());
       case home:
-        return MaterialPageRoute(builder: (_) => const HomePage());
+        return MaterialPageRoute(builder: (_) => const Tabbar());
       default:
         return MaterialPageRoute(
-            builder: (_) => const Scaffold(
-                body: Center(child: Text('Không tìm thấy trang!'))));
+          builder: (_) => const Scaffold(
+            body: Center(child: Text('Không tìm thấy trang!')),
+          ),
+        );
     }
   }
 }

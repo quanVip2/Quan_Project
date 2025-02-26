@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/core/theme/chip_button.dart';
 
+import '../widgets/avatar.dart';
+
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
 
@@ -41,12 +43,38 @@ class LibraryPageState extends State<LibraryPage> {
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [Text("Thư viện"), Icon(Icons.add)],
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              AvatarCircle(image: AssetImage('assets/image/album1.jpg')),
+                              SizedBox(width: 10,),
+                              Text("Thư viện"),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Icon(Icons.search),
+                              SizedBox(width: 20,),
+                              Icon(Icons.add)
+                            ],
+                          )
+                        ],
                       ),
                       SizedBox(
                         height: 20,
                       ),
                       rowChips(),
+                      SizedBox(height: 20,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Gần đây"),
+                          Icon(Icons.list)
+                        ],
+                      ),
+
                     ],
                   ),
                 )
