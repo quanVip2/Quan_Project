@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/presentation/pages/login/login_screen.dart';
+import 'package:untitled/presentation/pages/setting_page.dart';
 import 'package:untitled/presentation/widgets/avatar.dart';
 
 class DrawerView extends StatelessWidget {
@@ -21,6 +22,10 @@ class DrawerView extends StatelessWidget {
                   print('Điều hướng vào trang Profile');
                 },
               ),
+              Divider(
+                color: Colors.white60,
+                thickness: 0.2,
+              ),
               ListTile(
                 leading: Icon(Icons.add_circle_outline_sharp),
                 title: Text('Thêm tài khoản'),
@@ -41,6 +46,9 @@ class DrawerView extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons.settings_outlined),
                 title: Text('Cài đặt và quyền riêng tư'),
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SettingPage()));
+                },
               )
             ],
           ),

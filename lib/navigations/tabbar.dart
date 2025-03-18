@@ -24,7 +24,7 @@ class TabbarState extends State<Tabbar> {
           renderView(0, const HomePage()),
           renderView(1, const SearchPage()),
           renderView(2, const LibraryPage()),
-          renderView(3, const PremiumPage(image: AssetImage("assets/image/pre_ima.jpg"),)),
+          renderView(3, const PremiumPage()),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

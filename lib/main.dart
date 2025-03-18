@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/navigations/screen_router.dart';
 import 'package:untitled/navigations/tabbar.dart';
+import 'package:untitled/presentation/pages/premium_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: AppRouter.splash,
       onGenerateRoute: AppRouter.generateRoute,
-      home: Tabbar(),
+      home: PremiumPage(),
     );
   }
 }
