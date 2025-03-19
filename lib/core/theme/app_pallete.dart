@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Pallete {
 
@@ -15,4 +16,10 @@ class Pallete {
       Random().nextInt(256),
       1.0,
     );
+  static TextStyle textApp({double fontSize = 16 , FontWeight fontWeight = FontWeight.bold}){
+    return GoogleFonts.getFont('Montserrat',
+    fontWeight: fontWeight,
+    fontSize: fontSize,
+    color: Colors.white);
+  }
 }
