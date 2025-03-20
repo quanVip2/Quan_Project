@@ -1,7 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:untitled/navigations/tabbar.dart';
 import 'package:untitled/presentation/pages/login/login_screen.dart';
+import 'package:untitled/presentation/pages/setting/account_view.dart';
+import 'package:untitled/presentation/pages/setting/content_view.dart';
+import 'package:untitled/presentation/pages/setting/introduct_view.dart';
+import 'package:untitled/presentation/pages/setting/noification_view.dart';
+import 'package:untitled/presentation/pages/setting/returnP_view.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -18,7 +24,9 @@ class _SettingPageState extends State<SettingPage> {
         title: Text('Cài đặt'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
         actions: [
           IconButton(onPressed: () {}, icon: Icon(Icons.search_outlined))
@@ -66,6 +74,7 @@ class _SettingPageState extends State<SettingPage> {
                 title: Text('Tài khoản'),
                 subtitle: Text('Tên người dùng'),
                 onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => AccountPage()));
                   print('Điều hướng sang trang tài khoản');
                 },
               ),
@@ -74,30 +83,50 @@ class _SettingPageState extends State<SettingPage> {
                 title: Text('Nội dung và chế độ hiển thị'),
                 subtitle: Text('Canvas • Ngôn ngữ của ứng dụng'),
                 onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ContentDisplaySettingsPage()));
                   // Điều hướng
                 },
               ),
               ListTile(
                 leading:
-                    SvgPicture.asset('assets/icon/volume-loud-svgrepo-com.svg'),
+                Icon(Icons.repeat, color: Colors.white),
                 title: Text('Phát Lại'),
                 subtitle: Text('Phát liên tục • Tự động phát'),
+                 onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => PlaybackSettingsPage()));
+
+                  // Điều hướng
+                },
               ),
               ListTile(
                 leading: Icon(Icons.lock_outline_rounded),
                 title: Text('Quyền riêng tư và các tính năng xã hội'),
                 subtitle: Text(
                     'Nghệ sĩ đã nghe gần đây • Người theo dõi bạn và người bạn theo dõi'),
+                onTap: () {
+                    // Điều hướng
+                  },
               ),
+
+              
               ListTile(
                 leading: Icon(CupertinoIcons.bell),
                 title: Text('Thông báo'),
                 subtitle: Text('Thông báo • Email'),
+                 onTap: () {
+                  // Điều hướng
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationSettingsPage()));
+                },
               ),
               ListTile(
                 leading: Icon(CupertinoIcons.info),
                 title: Text('Giới thiệu'),
                 subtitle: Text('Chính sách quyền riêng tư'),
+                 onTap: () {
+                   Navigator.push(context, MaterialPageRoute(builder: (context) => AboutPage()));
+
+                  // Điều hướng
+                },
               )
             ],
           ),
