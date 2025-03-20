@@ -184,14 +184,15 @@ class PremiumPageState extends State<PremiumPage> {
                                     color: Colors.white60,
                                     fontWeight: FontWeight.w600),
                               )),
+                              SizedBox(height: 15,),
                               Container(
                                 color: Colors.white12,
                                 child: Column(
                                   children: [
-                                    Text(
+                                    ListTile( title: Text(
                                       'Lý do nên dùng gói Premium',
                                       style: Pallete.textApp(fontSize: 17),
-                                    ),
+                                    )),
                                     Divider(
                                       color: Colors.white12,
                                     ),
