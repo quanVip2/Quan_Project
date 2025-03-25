@@ -71,7 +71,7 @@ class PremiumPageState extends State<PremiumPage> {
               blendMode:
                   BlendMode.darken, // Chế độ hòa trộn giúp ảnh tối mượt mà hơn
               child: Image.asset(
-                "assets/image/pre_ima1.jpg",
+                "assets/image/pre_ima.jpg",
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.width - 100,
                 fit: BoxFit.cover,
