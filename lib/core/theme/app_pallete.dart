@@ -16,10 +16,12 @@ class Pallete {
       Random().nextInt(256),
       1.0,
     );
-  static TextStyle textApp({double fontSize = 16 , FontWeight fontWeight = FontWeight.bold}){
+
+  static TextStyle textApp({double fontSize = 16 , FontWeight fontWeight = FontWeight.bold, Color? color, TextDecoration? decoration}){
     return GoogleFonts.getFont('Montserrat',
     fontWeight: fontWeight,
     fontSize: fontSize,
-    color: Colors.white);
+    decoration: decoration,
+    color: color ?? Colors.white,);
   }
 }

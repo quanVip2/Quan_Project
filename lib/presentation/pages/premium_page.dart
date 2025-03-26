@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:untitled/core/theme/app_pallete.dart';
+import 'package:untitled/core/theme/button_large.dart';
 
 class PremiumPage extends StatefulWidget {
   const PremiumPage({super.key});
@@ -55,74 +56,27 @@ class PremiumPageState extends State<PremiumPage> {
         children: [
           Container(
             width: MediaQuery.of(context).size.width,
-            child: Stack(children: [
-              /// Ảnh nền
-              Column(
-                children: [
-                  Image.asset(
-                    "assets/image/pre_ima.jpg",
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.width - 200,
-                    fit: BoxFit.cover,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Image(
-                              image:
-                                  AssetImage('assets/image/spotify_logo.png'),
-                              width: 30,
-                              height: 30,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              'Premium',
-                              style: GoogleFonts.getFont('Montserrat',
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                        Text(
-                          'Nghe không giới hạn. Dùng thử Premium Individual trong 3 tháng với giá 50.000₫ trên Spotify.',
-                          style: GoogleFonts.getFont(
-                            'Montserrat',
-                            fontSize: 20,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-
-              /// Lớp gradient đè lên ảnh
-              Container(
+            child: ShaderMask(
+              shaderCallback: (Rect bounds) {
+                return LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent, // Phần trên trong suốt
+                    Colors.black.withOpacity(1), // Phần dưới tối dần
+                  ],
+                  stops: [0.6, 1.0], // Điều chỉnh vị trí chuyển đổi màu
+                ).createShader(bounds);
+              },
+              blendMode:
+                  BlendMode.darken, // Chế độ hòa trộn giúp ảnh tối mượt mà hơn
+              child: Image.asset(
+                "assets/image/pre_ima.jpg",
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.width - 200,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.5),
-                      Colors.black.withOpacity(1),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
+                height: MediaQuery.of(context).size.width - 100,
+                fit: BoxFit.cover,
               ),
-              const SizedBox(
-                height: 100,
-              )
-            ]),
+            ),
           ),
           SafeArea(
               child: SingleChildScrollView(
@@ -130,12 +84,23 @@ class PremiumPageState extends State<PremiumPage> {
             physics: BouncingScrollPhysics(),
             child: Column(children: [
               Container(
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.black.withOpacity(0),
+                      Colors.black.withOpacity(1),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
                 child: Padding(
                   padding: EdgeInsets.only(top: 40),
                   child: Column(
                     children: [
                       SizedBox(
-                        height: initialSize + 100,
+                        height: initialSize - 50,
                       ),
                       Padding(
                           padding: EdgeInsets.all(10),
@@ -143,30 +108,41 @@ class PremiumPageState extends State<PremiumPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Center(
-                                child: SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: ElevatedButton(
-                                    onPressed: () {},
-                                    child: Text(
-                                      'Dùng thử 3 tháng với giá 59.000₫',
-                                      style: GoogleFonts.getFont('Montserrat',
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.white,
-                                      padding: EdgeInsets.all(15),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(40),
-                                      ),
-                                    ),
+                              Row(
+                                children: [
+                                  Image(
+                                    image: AssetImage(
+                                        'assets/image/spotify_logo.png'),
+                                    width: 30,
+                                    height: 30,
                                   ),
-                                ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    'Premium',
+                                    style: GoogleFonts.getFont('Montserrat',
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
                               ),
                               SizedBox(
-                                height: 10,
+                                height: 20,
+                              ),
+                              Text(
+                                'Nghe không giới hạn. Dùng thử Premium Individual trong 3 tháng với giá 50.000₫ trên Spotify.',
+                                style: Pallete.textApp(fontSize: 20),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              ButtonLarge(
+                                text: 'Dùng thử 3 tháng với 59.000₫',
+                                style: Pallete.textApp(color: Colors.black),
+                              ),
+                              SizedBox(
+                                height: 15,
                               ),
                               Text.rich(TextSpan(
                                 children: [
@@ -184,12 +160,25 @@ class PremiumPageState extends State<PremiumPage> {
                                     color: Colors.white60,
                                     fontWeight: FontWeight.w600),
                               )),
+<<<<<<< HEAD
+                              SizedBox(
+                                height: 15,
+                              ),
+=======
                               SizedBox(height: 15,),
+>>>>>>> 6fbdb27b27d15c77fff6a6c0fcf5edfe72371f48
                               Container(
-                                color: Colors.white12,
+                                decoration: BoxDecoration(
+                                    color: Colors.white12,
+                                    borderRadius: BorderRadius.circular(20)),
                                 child: Column(
                                   children: [
+<<<<<<< HEAD
+                                    ListTile(
+                                        title: Text(
+=======
                                     ListTile( title: Text(
+>>>>>>> 6fbdb27b27d15c77fff6a6c0fcf5edfe72371f48
                                       'Lý do nên dùng gói Premium',
                                       style: Pallete.textApp(fontSize: 17),
                                     )),
@@ -243,6 +232,77 @@ class PremiumPageState extends State<PremiumPage> {
                                     ),
                                   ],
                                 ),
+                              ),
+                              SizedBox(
+                                height: 30,
+                              ),
+                              Text(
+                                'Các gói có sẵn',
+                                style: Pallete.textApp(fontSize: 20),
+                              ),
+                              SizedBox(
+                                height: 25,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white12,
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: Column(
+                                  children: [
+                                    ListTile(
+                                      title: Text(
+                                        'Mini',
+                                        style: Pallete.textApp(
+                                            fontSize: 20,
+                                            color: Colors.lightGreenAccent),
+                                      ),
+                                      subtitle: Text(
+                                        '10.500₫ cho 1 tuần',
+                                        style: Pallete.textApp(fontSize: 17),
+                                      ),
+                                    ),
+                                    Divider(
+                                      color: Colors.white12,
+                                      thickness: 2,
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    BulletPoint(
+                                        text:
+                                            '1 tài khoản Premium chỉ dành cho thiết bị'),
+                                    BulletPoint(
+                                        text:
+                                            'Nghe tối đa 30 bài hát trên 1 thiết bị khi không có kết nối mạng'),
+                                    BulletPoint(text: 'Thanh toán một lần'),
+                                    BulletPoint(
+                                        text: 'Chất lượng âm thanh cơ bản'),
+                                    SizedBox(height: 20,),
+                                    SizedBox(width: MediaQuery.of(context).size.width - 80,
+                                      child:
+                                      ButtonLarge(text: 'Mua Premium Mini', color: Colors.lightGreenAccent, style: Pallete.textApp(color: Colors.black),),),
+                                    SizedBox(height: 10,),
+                                    GestureDetector(
+                                      // onTap: () async {
+                                      //   final Uri url = Uri.parse("https://example.com/terms");
+                                      //   if (await canLaunchUrl(url)) {
+                                      //     await launchUrl(url, mode: LaunchMode.externalApplication);
+                                      //   } else {
+                                      //     throw 'Không thể mở $url';
+                                      //   }
+                                      // },
+                                      child: Text(
+                                        "Điều khoản & Điều kiện",
+                                        style: Pallete.textApp(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white60,
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               )
                             ],
                           ))
@@ -252,6 +312,36 @@ class PremiumPageState extends State<PremiumPage> {
               )
             ]),
           ))
+        ],
+      ),
+    );
+  }
+}
+
+class BulletPoint extends StatelessWidget {
+  final String text;
+
+  const BulletPoint({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 30),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('•'),
+          SizedBox(
+            width: 15,
+          ),
+          Expanded(
+              child: Text(
+            text,
+            style: Pallete.textApp(fontSize: 15, fontWeight: FontWeight.w500),
+          )),
+          SizedBox(
+            height: 10,
+          )
         ],
       ),
     );
