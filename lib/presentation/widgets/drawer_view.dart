@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/presentation/pages/drawer_Screen/Recent_screen.dart';
 import 'package:untitled/presentation/pages/login/login_screen.dart';
-import 'package:untitled/presentation/pages/setting_page.dart';
+import 'package:untitled/presentation/pages/profile_screen.dart';
+import 'package:untitled/presentation/pages/drawer_Screen/setting_page.dart';
 import 'package:untitled/presentation/widgets/avatar.dart';
 
 class DrawerView extends StatelessWidget {
@@ -19,6 +21,7 @@ class DrawerView extends StatelessWidget {
                 title: Text('Trang Nguyễn'),
                 subtitle: Text('Xem hồ sơ'),
                 onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
                   print('Điều hướng vào trang Profile');
                 },
               ),
@@ -36,12 +39,17 @@ class DrawerView extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons.lightbulb_outline_sharp),
                 title: Text("Bản phát hành mới"),
-                onTap: (){},
+                onTap: (){
+
+                },
               ),
               ListTile(
                 leading: Icon(Icons.settings_backup_restore_sharp),
                 title: Text('Gần đây'),
-                onTap: (){},
+                onTap: (){
+                 Navigator.push(context, MaterialPageRoute(builder: (context) => RecentPlaysPage()));
+
+                },
               ),
               ListTile(
                 leading: Icon(Icons.settings_outlined),
