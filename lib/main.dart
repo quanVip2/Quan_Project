@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: AppRouter.splash,
       onGenerateRoute: AppRouter.generateRoute,
-      home: PremiumPage(),
+      home: Tabbar(),
     );
   }
 }

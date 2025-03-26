@@ -80,8 +80,10 @@ class _ContentDisplaySettingsPageState extends State<ContentDisplaySettingsPage>
           subtitle: subtitle != null ? Text(subtitle, style: const TextStyle(fontSize: 12, color: Colors.white70)) : null,
           value: value,
           onChanged: onChanged,
+          activeColor: Colors.white, // Màu của nút bật (trắng)
+          activeTrackColor: Colors.green,
         ),
-        const Divider(color: Colors.white24, thickness: 0.5),
+        const Divider(color: Color.fromARGB(166, 255, 255, 255), thickness: 0.5),
       ],
     );
   }

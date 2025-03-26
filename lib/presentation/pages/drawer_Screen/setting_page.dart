@@ -99,17 +99,6 @@ class _SettingPageState extends State<SettingPage> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.lock_outline_rounded),
-                title: Text('Quyền riêng tư và các tính năng xã hội'),
-                subtitle: Text(
-                    'Nghệ sĩ đã nghe gần đây • Người theo dõi bạn và người bạn theo dõi'),
-                onTap: () {
-                    // Điều hướng
-                  },
-              ),
-
-              
-              ListTile(
                 leading: Icon(CupertinoIcons.bell),
                 title: Text('Thông báo'),
                 subtitle: Text('Thông báo • Email'),
