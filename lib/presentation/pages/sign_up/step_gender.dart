@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled/providers/sign_up_provider.dart';
 
 class SignUpGenderScreen extends StatefulWidget {
   const SignUpGenderScreen({Key? key}) : super(key: key);
@@ -8,10 +10,10 @@ class SignUpGenderScreen extends StatefulWidget {
 }
 
 class _SignUpGenderScreenState extends State<SignUpGenderScreen> {
-  String _selectedGender = "";
-
   @override
   Widget build(BuildContext context) {
+    final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -20,7 +22,7 @@ class _SignUpGenderScreenState extends State<SignUpGenderScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Quay lại màn hình trước đó
+            Navigator.pop(context);
           },
         ),
         title: const Text(
@@ -47,11 +49,11 @@ class _SignUpGenderScreenState extends State<SignUpGenderScreen> {
               spacing: 10,
               runSpacing: 10,
               children: [
-                _buildGenderOption("Female"),
-                _buildGenderOption("Male"),
-                _buildGenderOption("Non-binary"),
-                _buildGenderOption("Other"),
-                _buildGenderOption("Prefer not to say"),
+                _buildGenderOption(signUpProvider, "Female"),
+                _buildGenderOption(signUpProvider, "Male"),
+                _buildGenderOption(signUpProvider, "Non-binary"),
+                _buildGenderOption(signUpProvider, "Other"),
+                _buildGenderOption(signUpProvider, "Prefer not to say"),
               ],
             ),
             const SizedBox(height: 40),
@@ -60,15 +62,14 @@ class _SignUpGenderScreenState extends State<SignUpGenderScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
                 onPressed: () {
+                  print("Selected gender: ${signUpProvider.gender}");
                   Navigator.pushNamed(context, '/signup_name');
-                  print("Selected gender: $_selectedGender");
                 },
                 child: const Text(
                   "Next",
@@ -85,12 +86,15 @@ class _SignUpGenderScreenState extends State<SignUpGenderScreen> {
     );
   }
 
-  Widget _buildGenderOption(String gender) {
-    final bool isSelected = _selectedGender == gender;
+  Widget _buildGenderOption(SignUpProvider provider, String genderOption) {
+    // Chuyển giá trị sang chữ thường để phù hợp với API (ví dụ: "male", "female")
+    final String normalizedGender = genderOption.toLowerCase();
+    final bool isSelected = provider.gender.toLowerCase() == normalizedGender;
+
     return GestureDetector(
       onTap: () {
         setState(() {
-          _selectedGender = gender;
+          provider.setGender(normalizedGender);
         });
       },
       child: Container(
@@ -101,7 +105,7 @@ class _SignUpGenderScreenState extends State<SignUpGenderScreen> {
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
-          gender,
+          genderOption,
           style: TextStyle(
             color: isSelected ? Colors.black : Colors.white,
             fontSize: 16,

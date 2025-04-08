@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginEmailScreen extends StatefulWidget {
   const LoginEmailScreen({Key? key}) : super(key: key);
@@ -8,7 +11,64 @@ class LoginEmailScreen extends StatefulWidget {
 }
 
 class _LoginEmailScreenState extends State<LoginEmailScreen> {
-  bool _obscureText = true; // Ẩn/hiện mật khẩu
+  bool _obscureText = true;
+  bool _isLoading = false;
+
+  final TextEditingController _emailOrUsernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    const String apiUrl = "http://10.0.2.2:8080/auth/login"; // Địa chỉ backend
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "identifier": _emailOrUsernameController.text.trim(),
+          "password": _passwordController.text,
+        }),
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && responseData["message"] == "success") {
+        // Lưu token vào bộ nhớ để dùng sau này
+        String token = responseData["data"]["token"];
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token);
+
+        print("Token nhận được: $token");
+
+        // Chuyển sang màn hình chính
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        _showError(responseData["message"] ?? "Đăng nhập thất bại");
+      }
+    } catch (e) {
+      _showError("Lỗi kết nối đến server");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message, style: const TextStyle(color: Colors.white)), backgroundColor: Colors.red),
+    );
+  }
+
+  @override
+  void dispose() {
+    _emailOrUsernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,106 +79,66 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context); // Quay lại màn hình trước đó
-          },
+          onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            // Tiêu đề
-            const Text(
-              "Email or username",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            const Text("Email or username",
+                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
-            // Ô nhập email/username
             TextField(
+              controller: _emailOrUsernameController,
               style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.grey[800],
-                hintText: "Enter your email or username",
-                hintStyle: const TextStyle(color: Colors.white54),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
-                ),
-              ),
+              decoration: _inputDecoration("Enter your email or username"),
             ),
             const SizedBox(height: 20),
-            // Mật khẩu
-            const Text(
-              "Password",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            const Text("Password",
+                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
-            // Ô nhập mật khẩu
             TextField(
+              controller: _passwordController,
               obscureText: _obscureText,
               style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.grey[800],
-                hintText: "Enter your password",
-                hintStyle: const TextStyle(color: Colors.white54),
+              decoration: _inputDecoration("Enter your password").copyWith(
                 suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscureText ? Icons.visibility : Icons.visibility_off,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscureText = !_obscureText;
-                    });
-                  },
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
+                  icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off, color: Colors.white),
+                  onPressed: () => setState(() => _obscureText = !_obscureText),
                 ),
               ),
             ),
             const SizedBox(height: 40),
-            // Nút "Log in"
             Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/home');
-                },
-                child: const Text(
-                  "Log in",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+              child: _isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      ),
+                      onPressed: _login,
+                      child: const Text("Log in", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String hintText) {
+    return InputDecoration(
+      filled: true,
+      fillColor: Colors.grey[800],
+      hintText: hintText,
+      hintStyle: const TextStyle(color: Colors.white54),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
     );
   }
 }

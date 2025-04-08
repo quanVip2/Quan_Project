@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled/providers/sign_up_provider.dart';
 
 class SignUpDateOfBirthScreen extends StatefulWidget {
   const SignUpDateOfBirthScreen({Key? key}) : super(key: key);
 
   @override
-  State<SignUpDateOfBirthScreen> createState() =>
-      _SignUpDateOfBirthScreenState();
+  State<SignUpDateOfBirthScreen> createState() => _SignUpDateOfBirthScreenState();
 }
 
 class _SignUpDateOfBirthScreenState extends State<SignUpDateOfBirthScreen> {
@@ -15,23 +16,34 @@ class _SignUpDateOfBirthScreenState extends State<SignUpDateOfBirthScreen> {
 
   final List<int> _days = List.generate(31, (index) => index + 1);
   final List<String> _months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
   ];
-  final List<int> _years = List.generate(100, (index) => 2022 - index);
+  final List<int> _years = List.generate(100, (index) => 2024 - index);
+
+  // Chuyển đổi tháng từ chữ sang số
+  String _convertMonthToNumber(String month) {
+    final Map<String, String> monthMap = {
+      'Jan': '01',
+      'Feb': '02',
+      'Mar': '03',
+      'Apr': '04',
+      'May': '05',
+      'Jun': '06',
+      'Jul': '07',
+      'Aug': '08',
+      'Sep': '09',
+      'Oct': '10',
+      'Nov': '11',
+      'Dec': '12',
+    };
+    return monthMap[month] ?? '01';
+  }
 
   @override
   Widget build(BuildContext context) {
+    final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -40,7 +52,7 @@ class _SignUpDateOfBirthScreenState extends State<SignUpDateOfBirthScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Quay lại màn hình trước đó
+            Navigator.pop(context);
           },
         ),
         title: const Text(
@@ -97,8 +109,7 @@ class _SignUpDateOfBirthScreenState extends State<SignUpDateOfBirthScreen> {
                         _selectedMonth = newValue!;
                       });
                     },
-                    items:
-                        _months.map<DropdownMenuItem<String>>((String value) {
+                    items: _months.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
@@ -134,13 +145,19 @@ class _SignUpDateOfBirthScreenState extends State<SignUpDateOfBirthScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
                 onPressed: () {
+                  // Định dạng ngày: YYYY-MM-DD (thêm padLeft cho ngày nếu cần)
+                  String formattedDate =
+                      '$_selectedYear-${_convertMonthToNumber(_selectedMonth)}-${_selectedDay.toString().padLeft(2, '0')}';
+                  
+                  // Lưu birthday vào provider (trong registerUser, key sẽ là "birthday")
+                  signUpProvider.setDateOfBirth(formattedDate);
+                  
                   Navigator.pushNamed(context, '/signup_gender');
                 },
                 child: const Text(

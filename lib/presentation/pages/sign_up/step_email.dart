@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-
+import 'package:untitled/providers/sign_up_provider.dart';
+import 'package:provider/provider.dart';
 class SignUpEmailScreen extends StatelessWidget {
   const SignUpEmailScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
+    TextEditingController emailController =
+        TextEditingController(text: signUpProvider.email);
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -12,9 +17,7 @@ class SignUpEmailScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context); // Quay lại màn hình trước đó
-          },
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           "Create account",
@@ -45,6 +48,7 @@ class SignUpEmailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             TextField(
+              controller: emailController,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 filled: true,
@@ -70,8 +74,11 @@ class SignUpEmailScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.pushNamed(context,
-                      '/signup_password'); // Điều hướng tới màn hình tạo mật khẩu
+                  // Lưu email vào Provider trước khi chuyển màn hình
+                  signUpProvider.setEmail(emailController.text);
+
+                  // Điều hướng tới màn hình tạo mật khẩu
+                  Navigator.pushNamed(context, '/signup_password');
                 },
                 child: const Text(
                   "Next",

@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:untitled/navigations/screen_router.dart';
-import 'package:untitled/navigations/tabbar.dart';
 import 'package:untitled/presentation/pages/premium_page.dart';
+import 'package:untitled/providers/sign_up_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => SignUpProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -29,7 +37,6 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: AppRouter.splash,
       onGenerateRoute: AppRouter.generateRoute,
-      home: Tabbar(),
     );
   }
 }

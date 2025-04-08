@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled/providers/sign_up_provider.dart';
 import 'package:untitled/navigations/tabbar.dart';
-import 'package:untitled/presentation/pages/home_page.dart';
 
 class SignUpNameScreen extends StatefulWidget {
   const SignUpNameScreen({Key? key}) : super(key: key);
@@ -15,7 +16,14 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
   bool _shareRegistrationData = false;
 
   @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -117,7 +125,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Radio(
+                Radio<bool>(
                   value: true,
                   groupValue: _optOutMarketing,
                   onChanged: (bool? value) {
@@ -139,7 +147,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Radio(
+                Radio<bool>(
                   value: true,
                   groupValue: _shareRegistrationData,
                   onChanged: (bool? value) {
@@ -163,21 +171,39 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Tabbar()),
-                  );
-                  print("Name: ${_nameController.text}");
-                  print("Opt out marketing: $_optOutMarketing");
-                  print("Share registration data: $_shareRegistrationData");
+                onPressed: () async {
+                  // Lưu thông tin vào provider
+                  signUpProvider.setName(_nameController.text);
+                  signUpProvider.setOptOutMarketing(_optOutMarketing);
+                  signUpProvider.setShareRegistrationData(_shareRegistrationData);
+
+                  // Gọi API đăng ký
+                  try {
+                    bool success = await signUpProvider.registerUser();
+                    if (success) {
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Tabbar()),
+                    );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Đăng ký thất bại, vui lòng thử lại")),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Đăng ký thất bại, vui lòng thử lại")),
+                    );
+                    print(e); // In ra để debug lỗi
+                  }
+
                 },
+
                 child: const Text(
                   "Create account",
                   style: TextStyle(

@@ -160,25 +160,15 @@ class PremiumPageState extends State<PremiumPage> {
                                     color: Colors.white60,
                                     fontWeight: FontWeight.w600),
                               )),
-<<<<<<< HEAD
-                              SizedBox(
-                                height: 15,
-                              ),
-=======
                               SizedBox(height: 15,),
->>>>>>> 6fbdb27b27d15c77fff6a6c0fcf5edfe72371f48
                               Container(
                                 decoration: BoxDecoration(
                                     color: Colors.white12,
                                     borderRadius: BorderRadius.circular(20)),
                                 child: Column(
                                   children: [
-<<<<<<< HEAD
                                     ListTile(
                                         title: Text(
-=======
-                                    ListTile( title: Text(
->>>>>>> 6fbdb27b27d15c77fff6a6c0fcf5edfe72371f48
                                       'Lý do nên dùng gói Premium',
                                       style: Pallete.textApp(fontSize: 17),
                                     )),

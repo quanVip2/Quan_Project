@@ -1,72 +1,126 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
-Widget build(BuildContext context) {
-  return Container(
-    decoration: const BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Color(0x9E3D4E47), // Màu xanh xám với 62% độ đậm
-          Color(0x9E000000), // Màu dưới cùng (đen)
-        ],
-      ),
-    ),
-    child: Scaffold(
-      backgroundColor: Colors.transparent, // Để gradient hiển thị
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.pop(context); // Quay lại màn trước
-          },
-        ),
-        actions: const [
-          Icon(Icons.more_vert), // Biểu tượng menu tùy chọn
-          SizedBox(width: 16),
-        ],
-        backgroundColor: Colors.black26,
-        elevation: 0,
-      ),
-      body: Column(
-        children: [
-          const SizedBox(height: 20),
-          _buildProfileHeader(), // Ảnh đại diện + Tên người dùng
-          const SizedBox(height: 20),
-          _buildPlaylistSection(), // Danh sách phát
-          const SizedBox(height: 20),
-          _buildViewAllButton(), // Nút "Xem tất cả danh sách phát"
-        ],
-      ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
-    ),
-  );
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
+class _ProfileScreenState extends State<ProfileScreen> {
+  String userName = "Đang tải...";
+  String userEmail = "Đang tải...";
 
-  // Widget phần header (Ảnh đại diện + Thông tin người dùng)
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserProfile();
+  }
+
+  Future<void> _fetchUserProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+
+    if (token == null) {
+      print("Không tìm thấy token, không thể lấy thông tin người dùng");
+      return;
+    }
+
+    const String apiUrl = "http://10.0.2.2:8080/auth/profile";
+
+    try {
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {"Authorization": "Bearer $token"},
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        final profileData = data['data'];
+        if (profileData == null) {
+          print("Dữ liệu API không hợp lệ: ${response.body}");
+          return;
+        }
+
+        setState(() {
+          userName = profileData['userName'] ?? "Không có tên";
+          userEmail = profileData['email'] ?? "Không có email";
+          userEmail = profileData['email'] ?? "Không có email";
+
+        });
+      } else {
+        print("Lỗi khi lấy profile: ${response.statusCode} - ${response.body}");
+      }
+    } catch (e) {
+      print("Lỗi kết nối API: $e");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0x9E3D4E47),
+            Color(0x9E000000),
+          ],
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          actions: const [
+            Icon(Icons.more_vert),
+            SizedBox(width: 16),
+          ],
+          backgroundColor: Colors.black26,
+          elevation: 0,
+        ),
+        body: Column(
+          children: [
+            const SizedBox(height: 20),
+            _buildProfileHeader(),
+            const SizedBox(height: 20),
+            _buildPlaylistSection(),
+            const SizedBox(height: 20),
+            _buildViewAllButton(),
+          ],
+        ),
+        bottomNavigationBar: _buildBottomNavigationBar(),
+      ),
+    );
+  }
+
   Widget _buildProfileHeader() {
     return Column(
       children: [
-        CircleAvatar(
+        const CircleAvatar(
           radius: 50,
-          backgroundImage: AssetImage('assets/image/album1.jpg'), // Ảnh người dùng
+          backgroundImage: AssetImage('assets/image/avatar.png'),
         ),
         const SizedBox(height: 10),
-        const Text(
-          'Nguyenhongquan',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Text(
+          userName,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        const Text(
+        Text(
           '0 người theo dõi • Đang theo dõi 0',
-          style: TextStyle(fontSize: 14, color: Colors.white70),
+          style: const TextStyle(fontSize: 14, color: Colors.white70),
         ),
         const SizedBox(height: 10),
-        // Nút "Chỉnh sửa" + Chia sẻ
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -89,7 +143,6 @@ Widget build(BuildContext context) {
     );
   }
 
-  // Widget phần danh sách phát
   Widget _buildPlaylistSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,9 +156,9 @@ Widget build(BuildContext context) {
         ),
         const SizedBox(height: 10),
         ListTile(
-          leading: Image.asset('assets/image/album2.jpg', width: 50, height: 50), // Ảnh danh sách phát
-          title: const Text('Quan'),
-          subtitle: const Text('0 lượt lưu • Nguyenhongquan'),
+          leading: Image.asset('assets/image/album1.jpg', width: 50, height: 50),
+          title: Text(userName),
+          subtitle: Text('0 lượt lưu • $userEmail'),
           onTap: () {
             print('Mở danh sách phát');
           },
@@ -114,7 +167,6 @@ Widget build(BuildContext context) {
     );
   }
 
-  // Nút "Xem tất cả danh sách phát"
   Widget _buildViewAllButton() {
     return ElevatedButton(
       onPressed: () {
@@ -124,10 +176,9 @@ Widget build(BuildContext context) {
     );
   }
 
-  // Widget tạo Bottom Navigation Bar giống Spotify
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
-      currentIndex: 3, // Giả định trang hiện tại là "Premium"
+      currentIndex: 0,
       onTap: (index) {
         print("Chuyển đến tab $index");
       },

@@ -1,7 +1,63 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
-class AccountPage extends StatelessWidget {
+class AccountPage extends StatefulWidget {
   const AccountPage({Key? key}) : super(key: key);
+
+  @override
+  _AccountPageState createState() => _AccountPageState();
+}
+
+class _AccountPageState extends State<AccountPage> {
+  String userName = "Đang tải...";
+  String userEmail = "Đang tải...";
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserProfile();
+  }
+
+  Future<void> _fetchUserProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+
+    if (token == null) {
+      print("Không tìm thấy token, không thể lấy thông tin người dùng");
+      return;
+    }
+
+    const String apiUrl = "http://10.0.2.2:8080/auth/profile";
+
+    try {
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {"Authorization": "Bearer $token"},
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        // Kiểm tra nếu 'data' bị null
+        final profileData = data['data'];
+        if (profileData == null) {
+          print("Dữ liệu API không hợp lệ: ${response.body}");
+          return;
+        }
+
+        setState(() {
+          userName = profileData['userName'] ?? "Không có tên";
+          userEmail = profileData['email'] ?? "Không có email";
+        });
+      } else {
+        print("Lỗi khi lấy profile: ${response.statusCode} - ${response.body}");
+      }
+    } catch (e) {
+      print("Lỗi kết nối API: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +67,7 @@ class AccountPage extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Navigator.pop(context); // Quay lại màn trước
+            Navigator.pop(context);
           },
         ),
         backgroundColor: Colors.black26,
@@ -27,8 +83,8 @@ class AccountPage extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            _buildInfoRow('Tên người dùng', 'Nguyenhongquan'),
-            _buildInfoRow('Email', 'Nguyenhongquan@gmail.com'),
+            _buildInfoRow('Username', userName),
+            _buildInfoRow('Email', userEmail),
             const SizedBox(height: 24),
             _buildCurrentPlan(),
             const SizedBox(height: 24),
@@ -40,7 +96,6 @@ class AccountPage extends StatelessWidget {
     );
   }
 
-  // Widget hiển thị thông tin tài khoản
   Widget _buildInfoRow(String title, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,7 +107,6 @@ class AccountPage extends StatelessWidget {
     );
   }
 
-  // Widget hiển thị gói hiện tại
   Widget _buildCurrentPlan() {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -62,7 +116,7 @@ class AccountPage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Image.asset('assets/image/melodi_logo.png', width: 50, height: 50), // Thay bằng logo đúng
+          Image.asset('assets/image/melodi_logo.png', width: 50, height: 50),
           const SizedBox(width: 12),
           const Text('MelodiFlow Free', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         ],
@@ -70,7 +124,6 @@ class AccountPage extends StatelessWidget {
     );
   }
 
-  // Widget hiển thị gói Premium
   Widget _buildPremiumPlan(BuildContext context) {
     return GestureDetector(
       onTap: () {
@@ -101,10 +154,9 @@ class AccountPage extends StatelessWidget {
     );
   }
 
-  // Widget cho Bottom Navigation Bar
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
-      currentIndex: 3, // Giả định trang hiện tại là "Premium"
+      currentIndex: 3,
       onTap: (index) {
         print("Chuyển đến tab $index");
       },

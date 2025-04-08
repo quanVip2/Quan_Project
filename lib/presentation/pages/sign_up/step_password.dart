@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/providers/sign_up_provider.dart';
+import 'package:provider/provider.dart';
 
 class SignUpPasswordScreen extends StatefulWidget {
   const SignUpPasswordScreen({Key? key}) : super(key: key);
@@ -9,9 +11,12 @@ class SignUpPasswordScreen extends StatefulWidget {
 
 class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
   bool _obscureText = true;
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -20,7 +25,7 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Quay lại màn hình trước đó
+            Navigator.pop(context);
           },
         ),
         title: const Text(
@@ -51,8 +56,10 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
               ),
             ),
             const SizedBox(height: 20),
+
             // Ô nhập mật khẩu
             TextField(
+              controller: _passwordController,
               obscureText: _obscureText,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
@@ -78,19 +85,32 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
               ),
             ),
             const SizedBox(height: 40),
+
             // Nút "Next"
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
                 onPressed: () {
+                  final password = _passwordController.text.trim();
+
+                  if (password.length < 10) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Password must be at least 10 characters"),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+
+                  signUpProvider.setPassword(password);
                   Navigator.pushNamed(context, '/signup_dob');
                 },
                 child: const Text(
