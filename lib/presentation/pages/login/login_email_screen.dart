@@ -2,6 +2,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:untitled/features/bloc/auth_bloc.dart';
+import 'package:untitled/features/bloc/auth_event.dart';
+import 'package:untitled/presentation/pages/home_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:untitled/navigations/tabbar.dart';
+
 
 class LoginEmailScreen extends StatefulWidget {
   const LoginEmailScreen({Key? key}) : super(key: key);
@@ -41,10 +47,17 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', token);
 
+        context.read<AuthBloc>().add(LoggedIn(token));
+        
         print("Token nhận được: $token");
 
         // Chuyển sang màn hình chính
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Tabbar(),
+          ),
+        );
       } else {
         _showError(responseData["message"] ?? "Đăng nhập thất bại");
       }

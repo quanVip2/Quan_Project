@@ -2,14 +2,19 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:untitled/core/theme/chip_button.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:untitled/features/music/data/models/music.dart'; // Import model mới bạn đã viết
+import 'package:untitled/features/bloc/auth_bloc.dart'; // Import AuthBloc
+import 'package:untitled/features/bloc/auth_state.dart'; // Import AuthState
 import 'package:untitled/presentation/widgets/drawer_view.dart';
 import 'package:untitled/presentation/widgets/avatar.dart';
-import '../widgets/album_card.dart';
-import '../widgets/song_card.dart';
-import '../../features/music/data/models/music.dart'; // Import model mới bạn đã viết
+import 'package:untitled/presentation/widgets/album_card.dart';
+import 'package:untitled/presentation/widgets/song_card.dart';
+import 'package:untitled/presentation/pages/musicPlayer_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);  // Không cần token ở đây nữa
+
   @override
   State<StatefulWidget> createState() => HomePageState();
 }
@@ -27,18 +32,32 @@ class HomePageState extends State<HomePage> {
   Future<void> fetchMusicList() async {
     setState(() => isLoading = true);
     try {
-      final response = await http.get(Uri.parse('http://localhost:8080/paging/music'));
+      final token = context.read<AuthBloc>().state is AuthAuthenticated
+          ? (context.read<AuthBloc>().state as AuthAuthenticated).token
+          : null;
+
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:8080/home/paging/music'),
+        headers: {
+          'Authorization': token != null ? 'Bearer $token' : '',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      print("🔥 Raw response: ${response.body}");
+
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        final musicListResponse = MusicListResponse.fromJson(jsonResponse);
+        final musicList = jsonResponse['data']['musics'] as List;
+        
         setState(() {
-          musics = musicListResponse.data.musics;
+          musics = musicList.map((e) => MusicItem.fromJson(e)).toList();
         });
       } else {
-        print("Error fetching music: ${response.statusCode}");
+        print("❌ Server error: ${response.statusCode}");
       }
     } catch (e) {
-      print("Error: $e");
+      print("❌ Exception: $e");
     } finally {
       setState(() => isLoading = false);
     }
@@ -58,9 +77,9 @@ class HomePageState extends State<HomePage> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withOpacity(0.5),
-                  Colors.white.withOpacity(0.1),
-                  Colors.black.withOpacity(0),
+                  Colors.white.withAlpha((0.5 * 255).toInt()), // Alpha 128
+                  Colors.white.withAlpha((0.1 * 255).toInt()), // Alpha 25
+                  Colors.black.withAlpha((0 * 255).toInt()),   // Alpha 0
                 ],
               ),
             ),
@@ -104,39 +123,42 @@ class HomePageState extends State<HomePage> {
                   // ... các mục Recently Played và Recommend giữ nguyên ...
 
                   // NEW: Music Paging
+// NEW: Music Paging - Recently Played style
                   const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text("Music List (from API)"),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Text("Recently Played", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
-                  isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : musics.isEmpty
-                          ? const Center(child: Text("No music found."))
-                          : Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              child: GridView.builder(
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
+                  SizedBox(
+                    height: 220, // Chiều cao phù hợp với SongCard
+                    child: isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : musics.isEmpty
+                            ? const Center(child: Text("No music found."))
+                            : ListView.builder(
+                                scrollDirection: Axis.horizontal,
                                 itemCount: musics.length,
-                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  childAspectRatio: 0.8,
-                                  mainAxisSpacing: 12,
-                                  crossAxisSpacing: 12,
-                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
                                 itemBuilder: (context, index) {
                                   final music = musics[index];
-                                  return SongCard(
-                                    image: NetworkImage(music.imageUrl),
-                                    title: music.title,
-                                    artist: music.authors.map((a) => a.name).join(", "),
-                                    onTap: () {
-                                      // Ví dụ khi click vào bài hát
-                                      Navigator.push(...);},
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 12),
+                                    child: SongCard(
+                                      imageUrl: music.imageUrl,
+                                      title: music.title,
+                                      artist: music.authors.map((a) => a.name).join(", "),
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => MusicPlayerPage(musicId: music.id),
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   );
                                 },
                               ),
-                            ),
+                  ),
                 ],
               ),
             ),
@@ -156,12 +178,12 @@ rowChips() {
     ],
   );
 }
-
-class RowAlbumCard extends StatelessWidget {
+class RowAlbumCard extends StatelessWidget{
   final AssetImage image;
   final String label;
 
   const RowAlbumCard({super.key, required this.image, required this.label});
+
 
   @override
   Widget build(BuildContext context) {
@@ -174,12 +196,17 @@ class RowAlbumCard extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: Row(
           children: [
-            Image(image: image, height: 50, width: 50, fit: BoxFit.cover),
-            const SizedBox(width: 8),
-            Text(label),
+            Image(image: image,
+            height: 50,
+            width: 50,
+            fit: BoxFit.cover,),
+            const SizedBox(width: 8,),
+            Text(label)
           ],
         ),
       ),
     );
   }
 }
+
+

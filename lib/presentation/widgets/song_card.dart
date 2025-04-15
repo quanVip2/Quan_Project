@@ -1,35 +1,19 @@
 import 'package:flutter/material.dart';
 
 class SongCard extends StatelessWidget {
-  final ImageProvider image;
+  final String imageUrl;
   final String title;
   final String artist;
   final VoidCallback? onTap;
 
   const SongCard({
     Key? key,
-    required this.image,
+    required this.imageUrl,
     required this.title,
     required this.artist,
     this.onTap,
   }) : super(key: key);
 
-  // Factory constructor để tạo từ URL
-  factory SongCard.network({
-    Key? key,
-    required String imageUrl,
-    required String title,
-    required String artist,
-    VoidCallback? onTap, required String description,
-  }) {
-    return SongCard(
-      key: key,
-      image: NetworkImage(imageUrl),
-      title: title,
-      artist: artist,
-      onTap: onTap,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +26,30 @@ class SongCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(14),
-              child: Image(
-                image: image,
-                height: 140,
-                width: 140,
-                fit: BoxFit.cover,
-              ),
-            ),
+              child:Image.network(
+                      imageUrl,
+                      height: 140,
+                      width: 140,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          height: 140,
+                          width: 140,
+                          color: Colors.grey[200],
+                          child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 140,
+                          width: 140,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                        );
+                      },
+                    ),
+                  ),
             const SizedBox(height: 8),
             Text(title, overflow: TextOverflow.ellipsis),
             Text(artist, style: const TextStyle(color: Colors.grey)),
