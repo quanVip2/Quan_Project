@@ -126,6 +126,19 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
                       child: const Text("Log in", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
             ),
+            const SizedBox(height: 10),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/forgot-password'); // Điều hướng đến màn hình quên mật khẩu
+                  },
+                  child: const Text(
+                    "Forgot Password?",
+                    style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

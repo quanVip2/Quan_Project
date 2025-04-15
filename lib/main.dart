@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/navigations/screen_router.dart';
+import 'package:untitled/presentation/pages/forgot-password/forgot-password.dart';
+import 'package:untitled/presentation/pages/home_page.dart';
+import 'package:untitled/presentation/pages/musicPlayer_page.dart';
 import 'package:untitled/presentation/pages/premium_page.dart';
+import 'package:untitled/presentation/pages/setting/editProfile_view.dart';
 import 'package:untitled/providers/sign_up_provider.dart';
 
 void main() {
@@ -37,6 +41,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: AppRouter.splash,
       onGenerateRoute: AppRouter.generateRoute,
+      home: const MusicPlayerPage(musicId: 1),      
     );
   }
 }

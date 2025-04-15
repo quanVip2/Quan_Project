@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'editProfile_view.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({Key? key}) : super(key: key);
@@ -39,8 +40,6 @@ class _AccountPageState extends State<AccountPage> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
-        // Kiểm tra nếu 'data' bị null
         final profileData = data['data'];
         if (profileData == null) {
           print("Dữ liệu API không hợp lệ: ${response.body}");
@@ -84,7 +83,15 @@ class _AccountPageState extends State<AccountPage> {
             ),
             const SizedBox(height: 16),
             _buildInfoRow('Username', userName),
-            _buildInfoRow('Email', userEmail),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+                );
+              },
+              child: _buildInfoRowWithArrow('Email', userEmail),
+            ),
             const SizedBox(height: 24),
             _buildCurrentPlan(),
             const SizedBox(height: 24),
@@ -103,6 +110,22 @@ class _AccountPageState extends State<AccountPage> {
         Text(title, style: const TextStyle(fontSize: 14, color: Colors.white70)),
         Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
+      ],
+    );
+  }
+
+  Widget _buildInfoRowWithArrow(String title, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: const TextStyle(fontSize: 14, color: Colors.white70)),
+            Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white70),
       ],
     );
   }
