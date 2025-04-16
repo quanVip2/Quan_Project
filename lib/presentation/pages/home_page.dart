@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:untitled/core/theme/chip_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:untitled/features/music/data/models/music.dart'; // Import model mới bạn đã viết
-import 'package:untitled/features/bloc/auth_bloc.dart'; // Import AuthBloc
-import 'package:untitled/features/bloc/auth_state.dart'; // Import AuthState
+import 'package:untitled/features/music/data/models/music.dart'; 
+import 'package:untitled/features/bloc/auth_bloc.dart'; 
+import 'package:untitled/features/bloc/auth_state.dart'; 
 import 'package:untitled/presentation/widgets/drawer_view.dart';
 import 'package:untitled/presentation/widgets/avatar.dart';
 import 'package:untitled/presentation/widgets/album_card.dart';
@@ -13,7 +13,7 @@ import 'package:untitled/presentation/widgets/song_card.dart';
 import 'package:untitled/presentation/pages/musicPlayer_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);  // Không cần token ở đây nữa
+  const HomePage({Key? key}) : super(key: key); 
 
   @override
   State<StatefulWidget> createState() => HomePageState();

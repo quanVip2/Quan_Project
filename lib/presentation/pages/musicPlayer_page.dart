@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:rxdart/rxdart.dart';
 import '../../features/music/data/repositories/music_service.dart';
 import '../../features/music/data/models/music_detail_model.dart';
+import '../../features/music/data/repositories/music_next.dart';
 
 class MusicPlayerPage extends StatefulWidget {
   final int musicId;
@@ -22,11 +23,29 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
   void initState() {
     super.initState();
     _loadMusic();
+  
+    _player.playerStateStream.listen((state) {
+      if (state.processingState == ProcessingState.completed) {
+        _playNextSong(); // auto chuyển nhạc khi hết
+      }
+    });
   }
+  Future<void> _playNextSong() async {
+  try {
+    final nextMusic = await MusicNextRepository().fetchNextMusic(context, music!.id);
+    setState(() {
+      music = nextMusic;
+    });
+    await _player.setUrl(nextMusic.linkUrlMusic);
+    _player.play(); // auto play bài mới
+  } catch (e) {
+    debugPrint('Lỗi chuyển bài tiếp theo: $e');
+  }
+}
 
   Future<void> _loadMusic() async {
     try {
-      final result = await MusicService().fetchMusicDetail(widget.musicId);
+      final result = await MusicService().fetchMusicDetail(context, widget.musicId);
       setState(() {
         music = result;
         isLoading = false;
@@ -177,9 +196,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
               IconButton(
                 iconSize: 40,
                 icon: const Icon(Icons.skip_next, color: Colors.white),
-                onPressed: () {
-                  // TODO: handle next
-                },
+                onPressed: _playNextSong,
               ),
             ],
           ),
