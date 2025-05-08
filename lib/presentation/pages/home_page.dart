@@ -11,9 +11,14 @@ import 'package:untitled/presentation/widgets/avatar.dart';
 import 'package:untitled/presentation/widgets/album_card.dart';
 import 'package:untitled/presentation/widgets/song_card.dart';
 import 'package:untitled/presentation/pages/musicPlayer_page.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:untitled/features/music/data/models/music_detail_model.dart';
+import 'package:untitled/features/music/data/repositories/music_service.dart';
+import 'package:untitled/features/music/data/repositories/music_pading.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key); 
+  final Function(MusicDetail)? onTrackSelected; // 👈 thêm dòng này
+  const HomePage({Key? key, this.onTrackSelected}) : super(key: key); 
 
   @override
   State<StatefulWidget> createState() => HomePageState();
@@ -22,6 +27,8 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   List<MusicItem> musics = [];
   bool isLoading = false;
+  MusicDetail? _currentTrack;
+  final AudioPlayer _player = AudioPlayer();
 
   @override
   void initState() {
@@ -29,38 +36,49 @@ class HomePageState extends State<HomePage> {
     fetchMusicList();
   }
 
-  Future<void> fetchMusicList() async {
+    Future<void> fetchMusicList() async {
     setState(() => isLoading = true);
     try {
-      final token = context.read<AuthBloc>().state is AuthAuthenticated
-          ? (context.read<AuthBloc>().state as AuthAuthenticated).token
-          : null;
-
-      final response = await http.get(
-        Uri.parse('http://10.0.2.2:8080/home/paging/music'),
-        headers: {
-          'Authorization': token != null ? 'Bearer $token' : '',
-          'Content-Type': 'application/json',
-        },
-      );
-
-      print("🔥 Raw response: ${response.body}");
-
-      if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
-        final musicList = jsonResponse['data']['musics'] as List;
-        
-        setState(() {
-          musics = musicList.map((e) => MusicItem.fromJson(e)).toList();
-        });
-      } else {
-        print("❌ Server error: ${response.statusCode}");
-      }
-    } catch (e) {
-      print("❌ Exception: $e");
+      final pagingService = MusicPagingService();
+      final fetchedMusics = await pagingService.fetchPagedMusics(context);
+      setState(() {
+        musics = fetchedMusics;
+      });
     } finally {
       setState(() => isLoading = false);
     }
+  }
+
+
+  void playMusic(MusicItem item) async {
+    final musicService = MusicService();
+    try {
+      final detail = await musicService.fetchMusicDetail(context, item.id);
+
+      // 👉 Mở trang phát nhạc trước
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MusicPlayerPage(musicId: detail.id),
+        ),
+      );
+
+      // 👉 Sau khi trở lại, gọi callback để hiển thị mini player
+      if (widget.onTrackSelected != null) {
+        widget.onTrackSelected!(detail);
+      } else {
+        setState(() => _currentTrack = detail);
+      }
+    } catch (e) {
+      debugPrint('Lỗi khi chuyển sang trang phát nhạc: $e');
+    }
+  }
+
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
   }
 
   @override
@@ -77,9 +95,9 @@ class HomePageState extends State<HomePage> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withAlpha((0.5 * 255).toInt()), // Alpha 128
-                  Colors.white.withAlpha((0.1 * 255).toInt()), // Alpha 25
-                  Colors.black.withAlpha((0 * 255).toInt()),   // Alpha 0
+                  Colors.white.withAlpha((0.5 * 255).toInt()),
+                  Colors.white.withAlpha((0.1 * 255).toInt()),
+                  Colors.black.withAlpha((0 * 255).toInt()),
                 ],
               ),
             ),
@@ -105,11 +123,11 @@ class HomePageState extends State<HomePage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: const [
-                        Text("Recently Played"),
+                        Text("Recently Played" , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                         Row(
                           children: [
                             Icon(Icons.history),
@@ -120,16 +138,14 @@ class HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  // ... các mục Recently Played và Recommend giữ nguyên ...
-
-                  // NEW: Music Paging
-// NEW: Music Paging - Recently Played style
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    child: Text("Recently Played", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  ),
+                  // const Padding(
+                  //   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  //   child: 
+                  //     Text("Recently Played", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      
+                  // ),
                   SizedBox(
-                    height: 220, // Chiều cao phù hợp với SongCard
+                    height: 220,
                     child: isLoading
                         ? const Center(child: CircularProgressIndicator())
                         : musics.isEmpty
@@ -146,23 +162,123 @@ class HomePageState extends State<HomePage> {
                                       imageUrl: music.imageUrl,
                                       title: music.title,
                                       artist: music.authors.map((a) => a.name).join(", "),
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => MusicPlayerPage(musicId: music.id),
-                                          ),
-                                        );
-                                      },
+                                      onTap: () => playMusic(music),
                                     ),
                                   );
                                 },
                               ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text("Tuyển tập hàng đầu của bạn ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        Row(
+                          children: [
+                            Icon(Icons.history),
+                            SizedBox(width: 16),
+                            Icon(Icons.settings),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text("Phổ biến nhất" , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        Row(
+                          children: [
+                            Icon(Icons.history),
+                            SizedBox(width: 16),
+                            Icon(Icons.settings),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text("Mới Phát Hành" , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        Row(
+                          children: [
+                            Icon(Icons.history),
+                            SizedBox(width: 16),
+                            Icon(Icons.settings),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text("Dành cho fan của Kendrick Lamar" , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        Row(
+                          children: [
+                            Icon(Icons.history),
+                            SizedBox(width: 16),
+                            Icon(Icons.settings),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
           ),
+          if (_currentTrack != null)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                color: Colors.black87,
+                child: Row(
+                  children: [
+                    Image.network(
+                      _currentTrack!.imageUrl,
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(_currentTrack!.title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          Text(
+                            _currentTrack!.authors.map((a) => a.name).join(", "),
+                            style: const TextStyle(color: Colors.white70, fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(_player.playing ? Icons.pause : Icons.play_arrow, color: Colors.white),
+                      onPressed: () {
+                        setState(() {
+                          _player.playing ? _player.pause() : _player.play();
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -178,12 +294,12 @@ rowChips() {
     ],
   );
 }
-class RowAlbumCard extends StatelessWidget{
+
+class RowAlbumCard extends StatelessWidget {
   final AssetImage image;
   final String label;
 
   const RowAlbumCard({super.key, required this.image, required this.label});
-
 
   @override
   Widget build(BuildContext context) {
@@ -196,11 +312,8 @@ class RowAlbumCard extends StatelessWidget{
         clipBehavior: Clip.antiAlias,
         child: Row(
           children: [
-            Image(image: image,
-            height: 50,
-            width: 50,
-            fit: BoxFit.cover,),
-            const SizedBox(width: 8,),
+            Image(image: image, height: 50, width: 50, fit: BoxFit.cover),
+            const SizedBox(width: 8),
             Text(label)
           ],
         ),
@@ -208,5 +321,3 @@ class RowAlbumCard extends StatelessWidget{
     );
   }
 }
-
-

@@ -9,6 +9,9 @@ import 'package:untitled/presentation/pages/sign_up/step_password.dart';
 import 'package:untitled/presentation/pages/sign_up/step_dob.dart';
 import 'package:untitled/presentation/pages/sign_up/step_gender.dart';
 import 'package:untitled/presentation/pages/sign_up/step_name.dart';
+import 'package:untitled/presentation/pages/forgot-password/ForgotPasswordFlow.dart';
+
+
 import '../navigations/tabbar.dart';
 
 class AppRouter {
@@ -23,6 +26,8 @@ class AppRouter {
   static const String signUpGender = '/signup_gender';
   static const String signUpName = '/signup_name';
   static const String home = '/home';
+  static const String forgotPassword = '/forgot-password';
+
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -48,6 +53,9 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const SignUpNameScreen());
       case home:
         return MaterialPageRoute(builder: (_) => const Tabbar());
+      case forgotPassword:
+        return MaterialPageRoute(builder: (_) => ForgotPasswordFlow());
+
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(

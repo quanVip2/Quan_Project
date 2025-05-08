@@ -21,9 +21,14 @@ class MusicDetail {
 
   factory MusicDetail.fromJson(Map<String, dynamic> json) {
     final music = json['music'];
+    if (music == null) {
+      throw Exception("Missing 'music' object in JSON response");
+    }
+
     final authors = (json['authors'] as List)
         .map((e) => Author.fromJson(e))
         .toList();
+
     final categories = (json['categories'] as List)
         .map((e) => Category.fromJson(e))
         .toList();

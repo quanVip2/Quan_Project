@@ -17,7 +17,9 @@ class ForgotPasswordFlow extends StatelessWidget {
         },
         '/reset-password': (context) {
           final args = ModalRoute.of(context)!.settings.arguments as Map<String, String>;
-          return ResetPasswordScreen(email: args['email']!, token: args['token']!);
+          final email = args['email']!;
+          final token = args['token']!;
+          return ResetPasswordScreen(email: email, token: token);
         },
       },
     );

@@ -26,23 +26,22 @@
         });
 
         debugPrint('Raw response: ${resp.body}');
+        
+      if (resp.statusCode == 200) {
+        final jsonResponse = jsonDecode(resp.body);
 
-        if (resp.statusCode == 200) {
-          final outerMap = jsonDecode(resp.body);
-
-          final innerMap = outerMap['body'] ?? outerMap;
-
-          if (innerMap['status_code'] == 200) {
-            return MusicDetail.fromJson(innerMap['data']);
-          } else {
-            throw Exception('API returned error: ${innerMap['message']}');
-          }
+        /// 👉 KHÔNG còn dùng jsonResponse['body']
+        if (jsonResponse['status_code'] == 200) {
+          return MusicDetail.fromJson(jsonResponse['data']);
         } else {
-          throw Exception('HTTP Error: ${resp.statusCode}');
+          throw Exception('API returned error: ${jsonResponse['message']}');
         }
-      } catch (e) {
-        debugPrint('Lỗi fetch music: $e');
-        throw Exception('Failed to load music detail');
+      } else {
+        throw Exception('HTTP Error: ${resp.statusCode}');
       }
+    } catch (e) {
+      debugPrint('Lỗi fetch music: $e');
+      throw Exception('Failed to load music detail');
     }
   }
+}

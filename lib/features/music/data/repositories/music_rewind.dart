@@ -5,20 +5,16 @@ import 'package:http/http.dart' as http;
 
 import '../models/music_detail_model.dart';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:untitled/features/bloc/auth_bloc.dart';
-import 'package:untitled/features/bloc/auth_state.dart';
-
-class MusicNextRepository {
+class MusicRewindRepository {
   final String baseUrl;
 
-  MusicNextRepository({this.baseUrl = 'http://10.0.2.2:8080'});
+  MusicRewindRepository({this.baseUrl = 'http://10.0.2.2:8080'});
 
-  Future<MusicDetail> fetchNextMusic({
+  Future<MusicDetail> fetchRewindMusic({
     required int currentMusicId,
     required String token,
   }) async {
-    final uri = Uri.parse('$baseUrl/music/next/$currentMusicId');
+    final uri = Uri.parse('$baseUrl/music/rewind/$currentMusicId');
 
     try {
       final response = await http.get(
@@ -29,7 +25,7 @@ class MusicNextRepository {
         },
       );
 
-      debugPrint('Next music raw response: ${response.body}');
+      debugPrint('Rewind music raw response: ${response.body}');
 
       if (response.statusCode == 200) {
         final outerMap = jsonDecode(response.body);
@@ -44,8 +40,8 @@ class MusicNextRepository {
         throw Exception('HTTP error: ${response.statusCode}');
       }
     } catch (e) {
-      debugPrint('Lỗi khi gọi fetchNextMusic: $e');
-      throw Exception('Không thể tải bài hát tiếp theo');
+      debugPrint('Lỗi khi gọi fetchRewindMusic: $e');
+      throw Exception('Không thể tải bài hát trước đó');
     }
   }
 }

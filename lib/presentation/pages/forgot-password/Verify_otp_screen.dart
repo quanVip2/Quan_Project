@@ -33,12 +33,29 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
       final responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        String token = responseData["token"];
-        Navigator.pushReplacementNamed(context, '/reset-password', arguments: token);
+        final data = responseData['data'];
+        if (data != null && data is Map<String, dynamic>) {
+          final token = data['token'];
+          if (token != null && token is String) {
+            Navigator.pushReplacementNamed(
+              context,
+              '/reset-password',
+              arguments: {
+                'email': widget.email,
+                'token': token,
+              },
+            );
+          } else {
+            _showError("Token không hợp lệ từ server.");
+          }
+        } else {
+          _showError("Dữ liệu từ server không đúng định dạng.");
+        }
       } else {
         _showError(responseData["message"] ?? "OTP verification failed");
       }
     } catch (e) {
+      print("Error: $e");
       _showError("Lỗi kết nối đến server");
     } finally {
       setState(() {
@@ -49,7 +66,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message, style: const TextStyle(color: Colors.white)), backgroundColor: Colors.red),
+      SnackBar(
+        content: Text(message, style: const TextStyle(color: Colors.white)),
+        backgroundColor: Colors.red,
+      ),
     );
   }
 
@@ -68,7 +88,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Enter the OTP sent to your email", style: TextStyle(color: Colors.white, fontSize: 16)),
+            const Text(
+              "Enter the OTP sent to your email",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
             const SizedBox(height: 20),
             TextField(
               controller: _otpController,
@@ -80,7 +103,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                 fillColor: Colors.grey[800],
                 hintText: "6-digit OTP",
                 hintStyle: const TextStyle(color: Colors.white54),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
             const SizedBox(height: 40),

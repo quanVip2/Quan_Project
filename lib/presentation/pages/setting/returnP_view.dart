@@ -138,22 +138,23 @@ class _PlaybackSettingsPageState extends State<PlaybackSettingsPage> {
   // Widget tạo Bottom Navigation Bar giống Spotify
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
-      currentIndex: 3, // Giả định trang hiện tại là "Premium"
+      currentIndex: 1, 
       onTap: (index) {
         print("Chuyển đến tab $index");
+        
       },
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
-          label: 'Home',
+          label: 'Trang chủ',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.search),
-          label: 'Search',
+          label: 'Tìm kiếm',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.library_music_outlined),
-          label: 'Your Library',
+          label: 'Thư viện',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.workspace_premium),

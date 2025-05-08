@@ -1,10 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
-import '../../features/music/data/repositories/music_service.dart';
+
 import '../../features/music/data/models/music_detail_model.dart';
-import '../../features/music/data/repositories/music_next.dart';
+import '../../features/music/data/models/duration_state.dart';
+import '../../features/music/data/repositories/music_player_controller.dart';
+import '../../features/music/data/repositories/music_service.dart';
 
 class MusicPlayerPage extends StatefulWidget {
   final int musicId;
@@ -15,57 +20,76 @@ class MusicPlayerPage extends StatefulWidget {
 }
 
 class _MusicPlayerPageState extends State<MusicPlayerPage> {
-  final _player = AudioPlayer();
   bool isLoading = true;
   MusicDetail? music;
+
+  final controller = MusicPlayerController.instance;
+  StreamSubscription<PlayerState>? _playerStateSubscription;
+
+  @override
+  void didUpdateWidget(covariant MusicPlayerPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.musicId != oldWidget.musicId) {
+      _loadMusic(); // Gọi lại nếu ID thay đổi
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     _loadMusic();
-  
-    _player.playerStateStream.listen((state) {
+
+    controller.setOnMusicChanged((MusicDetail newMusic) {
+      if (!mounted) return;
+      setState(() {
+        music = newMusic;
+      });
+    });
+
+    _playerStateSubscription =
+        controller.player.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {
-        _playNextSong(); // auto chuyển nhạc khi hết
+        controller.playNextMusic(context, (newMusic) {
+          if (!mounted) return;
+          setState(() {
+            music = newMusic;
+          });
+        });
       }
     });
   }
-  Future<void> _playNextSong() async {
-  try {
-    final nextMusic = await MusicNextRepository().fetchNextMusic(context, music!.id);
-    setState(() {
-      music = nextMusic;
-    });
-    await _player.setUrl(nextMusic.linkUrlMusic);
-    _player.play(); // auto play bài mới
-  } catch (e) {
-    debugPrint('Lỗi chuyển bài tiếp theo: $e');
+
+  @override
+  void dispose() {
+    _playerStateSubscription?.cancel();
+    controller.setOnMusicChanged(null); // Clear callback
+    super.dispose();
   }
-}
 
   Future<void> _loadMusic() async {
     try {
-      final result = await MusicService().fetchMusicDetail(context, widget.musicId);
+      final result =
+          await MusicService().fetchMusicDetail(context, widget.musicId);
+      final current = controller.currentTrack;
+
+      if (!mounted) return;
       setState(() {
         music = result;
         isLoading = false;
       });
-      await _player.setUrl(result.linkUrlMusic);
+
+      if (current == null || current.id != result.id) {
+        await controller.setCurrentTrack(result);
+      }
     } catch (e) {
       debugPrint('Lỗi fetch music: $e');
     }
   }
 
-  @override
-  void dispose() {
-    _player.dispose();
-    super.dispose();
-  }
-
   Stream<DurationState> get _durationStateStream =>
       Rx.combineLatest2<Duration, Duration, DurationState>(
-        _player.positionStream,
-        _player.durationStream.whereType<Duration>(),
+        controller.player.positionStream,
+        controller.player.durationStream.whereType<Duration>(),
         (position, duration) => DurationState(position, duration),
       );
 
@@ -83,7 +107,8 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(music!.title, style: const TextStyle(color: Colors.white)),
+        title:
+            Text(music!.title, style: const TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Column(
@@ -95,7 +120,8 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
               height: 300,
               child: Center(child: CircularProgressIndicator()),
             ),
-            errorWidget: (_, __, ___) => const Icon(Icons.error, color: Colors.white),
+            errorWidget: (_, __, ___) =>
+                const Icon(Icons.error, color: Colors.white),
             height: 300,
             width: 300,
             fit: BoxFit.cover,
@@ -108,7 +134,10 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
               children: [
                 Text(
                   music!.title,
-                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 6),
@@ -145,9 +174,12 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                     inactiveColor: Colors.white24,
                     min: 0,
                     max: total.inSeconds.toDouble(),
-                    value: position.inSeconds.clamp(0, total.inSeconds).toDouble(),
+                    value: position.inSeconds
+                        .clamp(0, total.inSeconds)
+                        .toDouble(),
                     onChanged: (value) {
-                      _player.seek(Duration(seconds: value.toInt()));
+                      controller.player
+                          .seek(Duration(seconds: value.toInt()));
                     },
                   ),
                   Padding(
@@ -155,8 +187,12 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(_formatDuration(position), style: const TextStyle(color: Colors.white70)),
-                        Text(_formatDuration(total), style: const TextStyle(color: Colors.white70)),
+                        Text(_formatDuration(position),
+                            style:
+                                const TextStyle(color: Colors.white70)),
+                        Text(_formatDuration(total),
+                            style:
+                                const TextStyle(color: Colors.white70)),
                       ],
                     ),
                   ),
@@ -170,24 +206,31 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
             children: [
               IconButton(
                 iconSize: 40,
-                icon: const Icon(Icons.skip_previous, color: Colors.white),
+                icon:
+                    const Icon(Icons.skip_previous, color: Colors.white),
                 onPressed: () {
-                  // TODO: handle previous
+                  controller.playRewindMusic(context, (newMusic) {
+                    setState(() {
+                      music = newMusic;
+                    });
+                  });
                 },
               ),
               StreamBuilder<PlayerState>(
-                stream: _player.playerStateStream,
+                stream: controller.player.playerStateStream,
                 builder: (context, snapshot) {
                   final playing = snapshot.data?.playing ?? false;
                   return IconButton(
                     iconSize: 72,
                     color: Colors.white,
-                    icon: Icon(playing ? Icons.pause_circle_filled : Icons.play_circle_fill),
+                    icon: Icon(playing
+                        ? Icons.pause_circle_filled
+                        : Icons.play_circle_fill),
                     onPressed: () {
                       if (playing) {
-                        _player.pause();
+                        controller.pause();
                       } else {
-                        _player.play();
+                        controller.resume();
                       }
                     },
                   );
@@ -196,7 +239,13 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
               IconButton(
                 iconSize: 40,
                 icon: const Icon(Icons.skip_next, color: Colors.white),
-                onPressed: _playNextSong,
+                onPressed: () {
+                  controller.playNextMusic(context, (newMusic) {
+                    setState(() {
+                      music = newMusic;
+                    });
+                  });
+                },
               ),
             ],
           ),
@@ -216,10 +265,4 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
     final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
     return '$minutes:$seconds';
   }
-}
-
-class DurationState {
-  final Duration position;
-  final Duration total;
-  DurationState(this.position, this.total);
 }
