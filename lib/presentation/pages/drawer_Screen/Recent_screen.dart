@@ -37,7 +37,6 @@ class _RecentPlaysPageState extends State<RecentPlaysPage> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
@@ -88,20 +87,4 @@ class _RecentPlaysPageState extends State<RecentPlaysPage> {
       }),
     );
   }
-
-  Widget _buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      currentIndex: 3,
-      onTap: (index) {
-        print("Chuyển đến tab $index");
-      },
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-        BottomNavigationBarItem(icon: Icon(Icons.library_music_outlined), label: 'Your Library'),
-        BottomNavigationBarItem(icon: Icon(Icons.workspace_premium), label: 'Premium'),
-      ],
-    );
-  }
 }
-

@@ -62,7 +62,7 @@ class NotificationSettingsPage extends StatelessWidget {
   // Widget tạo Bottom Navigation Bar giống Spotify
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
-      currentIndex: 3, // Giả định trang hiện tại là "Premium"
+      currentIndex: 1, // Giả định trang hiện tại là "Premium"
       onTap: (index) {
         print("Chuyển đến tab $index");
       },

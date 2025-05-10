@@ -179,7 +179,7 @@ class _AccountPageState extends State<AccountPage> {
 
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
-      currentIndex: 3,
+      currentIndex: 1,
       onTap: (index) {
         print("Chuyển đến tab $index");
       },
