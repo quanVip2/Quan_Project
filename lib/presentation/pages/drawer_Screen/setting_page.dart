@@ -55,7 +55,7 @@ class _SettingPageState extends State<SettingPage> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
         );
       } else {
         print("❌ Lỗi khi đăng xuất! Status: ${response.statusCode}, Response: ${response.body}");
@@ -76,15 +76,15 @@ class _SettingPageState extends State<SettingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cài đặt'),
+        title: const Text('Cài đặt'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.search_outlined))
+          IconButton(onPressed: () {}, icon: const Icon(Icons.search_outlined))
         ],
         backgroundColor: Colors.black26,
         centerTitle: true,
@@ -95,25 +95,25 @@ class _SettingPageState extends State<SettingPage> {
             child: Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Column(
                     children: [
-                      Text(
+                      const Text(
                         'Tài khoản miễn phí',
                         style: TextStyle(color: Colors.white),
                       ),
-                      SizedBox(height: 40),
+                      const SizedBox(height: 40),
                       ElevatedButton(
                         onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          padding: const EdgeInsets.all(20),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40)),
+                        ),
                         child: Text(
                           'Dùng Premium',
                           style: TextStyle(color: Colors.black),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          padding: EdgeInsets.all(20),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40)),
                         ),
                       )
                     ],
@@ -125,72 +125,72 @@ class _SettingPageState extends State<SettingPage> {
           Column(
             children: [
               ListTile(
-                leading: Icon(Icons.account_circle_outlined),
-                title: Text('Tài khoản'),
-                subtitle: Text('Tên người dùng'),
+                leading: const Icon(Icons.account_circle_outlined),
+                title: const Text('Tài khoản'),
+                subtitle: const Text('Tên người dùng'),
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AccountPage()));
+                      MaterialPageRoute(builder: (context) => const AccountPage()));
                 },
               ),
               ListTile(
-                leading: Icon(Icons.music_note_outlined),
-                title: Text('Nội dung và chế độ hiển thị'),
-                subtitle: Text('Canvas • Ngôn ngữ của ứng dụng'),
+                leading: const Icon(Icons.music_note_outlined),
+                title: const Text('Nội dung và chế độ hiển thị'),
+                subtitle: const Text('Canvas • Ngôn ngữ của ứng dụng'),
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              ContentDisplaySettingsPage()));
+                              const ContentDisplaySettingsPage()));
                 },
               ),
               ListTile(
-                leading: Icon(Icons.repeat, color: Colors.white),
-                title: Text('Phát Lại'),
-                subtitle: Text('Phát liên tục • Tự động phát'),
+                leading: const Icon(Icons.repeat, color: Colors.white),
+                title: const Text('Phát Lại'),
+                subtitle: const Text('Phát liên tục • Tự động phát'),
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => PlaybackSettingsPage()));
+                          builder: (context) => const PlaybackSettingsPage()));
                 },
               ),
               ListTile(
-                leading: Icon(CupertinoIcons.bell),
-                title: Text('Thông báo'),
-                subtitle: Text('Thông báo • Email'),
+                leading: const Icon(CupertinoIcons.bell),
+                title: const Text('Thông báo'),
+                subtitle: const Text('Thông báo • Email'),
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              NotificationSettingsPage()));
+                              const NotificationSettingsPage()));
                 },
               ),
               ListTile(
-                leading: Icon(CupertinoIcons.info),
-                title: Text('Giới thiệu'),
-                subtitle: Text('Chính sách quyền riêng tư'),
+                leading: const Icon(CupertinoIcons.info),
+                title: const Text('Giới thiệu'),
+                subtitle: const Text('Chính sách quyền riêng tư'),
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AboutPage()));
+                      MaterialPageRoute(builder: (context) => const AboutPage()));
                 },
               )
             ],
           ),
           Center(
             child: ElevatedButton(
-              onPressed: _logout, // Gọi API logout khi nhấn nút
-              child: Text(
-                'Đăng xuất',
-                style: TextStyle(color: Colors.black),
-              ),
+              onPressed: _logout,
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(40),
                 ),
                 backgroundColor: Colors.white,
+              ), // Gọi API logout khi nhấn nút
+              child: Text(
+                'Đăng xuất',
+                style: TextStyle(color: Colors.black),
               ),
             ),
           )

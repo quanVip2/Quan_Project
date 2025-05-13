@@ -7,19 +7,19 @@ class SongCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   const SongCard({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.title,
     required this.artist,
     this.onTap,
-  }) : super(key: key);
+  });
 
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: SizedBox(
         width: 140,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

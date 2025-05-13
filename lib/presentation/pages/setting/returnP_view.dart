@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PlaybackSettingsPage extends StatefulWidget {
-  const PlaybackSettingsPage({Key? key}) : super(key: key);
+  const PlaybackSettingsPage({super.key});
 
   @override
   State<PlaybackSettingsPage> createState() => _PlaybackSettingsPageState();

@@ -1,15 +1,22 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../features/music/data/models/music_detail_model.dart';
 import '../../features/music/data/models/duration_state.dart';
 import '../../features/music/data/repositories/music_player_controller.dart';
 import '../../features/music/data/repositories/music_service.dart';
+import '../../features/library/data/models/playlist_model.dart';
+import '../../features/library/data/repositories/playlist_repository.dart';
+import '../../features/bloc/auth_bloc.dart';
+import '../../features/bloc/auth_state.dart';
 
 class MusicPlayerPage extends StatefulWidget {
   final int musicId;
@@ -22,6 +29,7 @@ class MusicPlayerPage extends StatefulWidget {
 class _MusicPlayerPageState extends State<MusicPlayerPage> {
   bool isLoading = true;
   MusicDetail? music;
+  bool isLiked = false;
 
   final controller = MusicPlayerController.instance;
   StreamSubscription<PlayerState>? _playerStateSubscription;
@@ -38,12 +46,14 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
   void initState() {
     super.initState();
     _loadMusic();
+    _checkIsLiked();
 
     controller.setOnMusicChanged((MusicDetail newMusic) {
       if (!mounted) return;
       setState(() {
         music = newMusic;
       });
+      _checkIsLiked();
     });
 
     _playerStateSubscription =
@@ -54,6 +64,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
           setState(() {
             music = newMusic;
           });
+          _checkIsLiked();
         });
       }
     });
@@ -86,6 +97,59 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
     }
   }
 
+  Future<void> _checkIsLiked() async {
+    // Gọi API get-music-from-like-music để kiểm tra
+    if (music == null) return;
+    try {
+      // Lấy token từ AuthBloc
+      final authState = context.read<AuthBloc>().state;
+      String? token;
+      if (authState is AuthAuthenticated) {
+        token = authState.token;
+      }
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:8080/app/like-music/get-music-from-like-music'),
+        headers: {
+          'Authorization': token != null ? 'Bearer $token' : '',
+          'Content-Type': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body);
+        final data = decoded['data'] ?? decoded['body']['data'];
+        if (data is List) {
+          setState(() {
+            isLiked = data.any((item) => item['id'] == music!.id);
+          });
+        }
+      }
+    } catch (e) {
+      // ignore error
+    }
+  }
+
+  Future<void> _toggleLike() async {
+    if (music == null) return;
+    final repo = PlaylistRepository();
+    try {
+      if (isLiked) {
+        await repo.deleteMusicFromLikeMusic(context, music!.id);
+        setState(() {
+          isLiked = false;
+        });
+      } else {
+        await repo.addMusicToLikeMusic(context, music!.id);
+        setState(() {
+          isLiked = true;
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi: $e'), backgroundColor: Colors.red),
+      );
+    }
+  }
+
   Stream<DurationState> get _durationStateStream =>
       Rx.combineLatest2<Duration, Duration, DurationState>(
         controller.player.positionStream,
@@ -107,9 +171,23 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title:
-            Text(music!.title, style: const TextStyle(color: Colors.white)),
+        title: Text(music!.title, style: const TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          IconButton(
+            icon: Icon(
+              isLiked ? Icons.favorite : Icons.favorite_border,
+              color: isLiked ? Colors.pinkAccent : Colors.white,
+            ),
+            onPressed: _toggleLike,
+            tooltip: isLiked ? 'Bỏ khỏi yêu thích' : 'Thêm vào yêu thích',
+          ),
+          IconButton(
+            icon: const Icon(Icons.playlist_add),
+            onPressed: _showAddToPlaylistDialog,
+            tooltip: 'Thêm vào playlist',
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -258,6 +336,80 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
         ],
       ),
     );
+  }
+
+  Future<void> _showAddToPlaylistDialog() async {
+    if (music == null) return;
+
+    final playlistRepository = PlaylistRepository();
+    try {
+      final playlists = await playlistRepository.getPlaylistsByUserId(context, "current_user");
+      
+      if (!mounted) return;
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Thêm vào playlist'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: playlists.isEmpty
+                ? const Center(
+                    child: Text('Bạn chưa có playlist nào'),
+                  )
+                : ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: playlists.length,
+                    itemBuilder: (context, index) {
+                      final playlist = playlists[index];
+                      return ListTile(
+                        title: Text(playlist.name),
+                        onTap: () async {
+                          Navigator.pop(context);
+                          try {
+                            await playlistRepository.addMusicToPlaylist(
+                              context,
+                              playlist.id,
+                              music!.id,
+                            );
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Đã thêm vào playlist thành công'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          } catch (e) {
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Không thể thêm vào playlist: $e'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    },
+                  ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Hủy'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Không thể tải danh sách playlist: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   String _formatDuration(Duration d) {

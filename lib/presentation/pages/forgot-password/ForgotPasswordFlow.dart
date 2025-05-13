@@ -4,13 +4,15 @@ import 'reset-password.dart';
 import 'Verify_otp_screen.dart';
 
 class ForgotPasswordFlow extends StatelessWidget {
+  const ForgotPasswordFlow({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/forgot-password',
       routes: {
-        '/forgot-password': (context) => ForgotPasswordScreen(),
+        '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/otp-verification': (context) {
           final email = ModalRoute.of(context)!.settings.arguments as String;
           return VerifyOtpScreen(email: email);

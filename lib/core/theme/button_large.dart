@@ -7,7 +7,7 @@ class ButtonLarge extends StatelessWidget {
   final Color? color;
   final TextStyle? style;
 
-  ButtonLarge({super.key, required this.text, this.color, this.style});
+  const ButtonLarge({super.key, required this.text, this.color, this.style});
 
   @override
   Widget build(BuildContext context) {
@@ -16,16 +16,16 @@ class ButtonLarge extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         child: ElevatedButton(
           onPressed: () {},
-          child: Text(
-            text,
-            style: style ?? Pallete.textApp(fontSize: 15),
-          ),
           style: ElevatedButton.styleFrom(
             backgroundColor: color ?? Colors.white,
-            padding: EdgeInsets.all(15),
+            padding: const EdgeInsets.all(15),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(40),
             ),
+          ),
+          child: Text(
+            text,
+            style: style ?? Pallete.textApp(fontSize: 15),
           ),
         ),
       ),

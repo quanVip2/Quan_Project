@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:untitled/providers/sign_up_provider.dart';
 import 'package:provider/provider.dart';
 class SignUpEmailScreen extends StatelessWidget {
-  const SignUpEmailScreen({Key? key}) : super(key: key);
+  const SignUpEmailScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

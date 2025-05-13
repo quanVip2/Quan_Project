@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:untitled/providers/sign_up_provider.dart';
 
 class SignUpGenderScreen extends StatefulWidget {
-  const SignUpGenderScreen({Key? key}) : super(key: key);
+  const SignUpGenderScreen({super.key});
 
   @override
   State<SignUpGenderScreen> createState() => _SignUpGenderScreenState();

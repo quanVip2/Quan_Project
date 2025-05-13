@@ -12,7 +12,7 @@ class SearchBox extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Row(
+      child: const Row(
         children: [
           SizedBox(width: 10,),
           Icon(Icons.search, color: Colors.black,),

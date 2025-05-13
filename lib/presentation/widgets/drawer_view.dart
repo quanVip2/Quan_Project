@@ -66,7 +66,7 @@ class _DrawerViewState extends State<DrawerView> {
               title: Text(userName),
               subtitle: const Text('Xem hồ sơ'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
               },
             ),
             const Divider(color: Colors.white60, thickness: 0.2),

@@ -4,7 +4,7 @@ import 'dart:convert';
 
 class ResetPasswordScreen extends StatefulWidget {
   final String token;
-  const ResetPasswordScreen({Key? key, required this.token, required String email}) : super(key: key);
+  const ResetPasswordScreen({super.key, required this.token, required String email});
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -83,7 +83,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   ? const CircularProgressIndicator(color: Colors.white)
                   : ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF1DB954), // Spotify green
+                        backgroundColor: const Color(0xFF1DB954), // Spotify green
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),

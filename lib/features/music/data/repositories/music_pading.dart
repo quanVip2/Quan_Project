@@ -14,7 +14,7 @@ class MusicPagingService {
           : null;
 
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8080/home/paging/music'),
+        Uri.parse('http://10.0.2.2:8080/app/home/paging/music'),
         headers: {
           'Authorization': token != null ? 'Bearer $token' : '',
           'Content-Type': 'application/json',

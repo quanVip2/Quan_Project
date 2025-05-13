@@ -3,7 +3,7 @@ import 'package:untitled/providers/sign_up_provider.dart';
 import 'package:provider/provider.dart';
 
 class SignUpPasswordScreen extends StatefulWidget {
-  const SignUpPasswordScreen({Key? key}) : super(key: key);
+  const SignUpPasswordScreen({super.key});
 
   @override
   State<SignUpPasswordScreen> createState() => _SignUpPasswordScreenState();

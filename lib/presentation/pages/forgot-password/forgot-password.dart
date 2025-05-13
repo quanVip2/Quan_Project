@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({Key? key}) : super(key: key);
+  const ForgotPasswordScreen({super.key});
 
   @override
   _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
@@ -27,18 +27,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       final responseData = jsonDecode(response.body);
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(responseData["message"], style: TextStyle(color: Colors.white)), backgroundColor: Colors.green),
+          SnackBar(content: Text(responseData["message"], style: const TextStyle(color: Colors.white)), backgroundColor: Colors.green),
         );
         // Điều hướng sang màn hình nhập OTP
         Navigator.pushNamed(context, '/otp-verification', arguments: _emailController.text.trim());
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(responseData["message"], style: TextStyle(color: Colors.white)), backgroundColor: Colors.red),
+          SnackBar(content: Text(responseData["message"], style: const TextStyle(color: Colors.white)), backgroundColor: Colors.red),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Lỗi kết nối đến server", style: TextStyle(color: Colors.white)), backgroundColor: Colors.red),
+        const SnackBar(content: Text("Lỗi kết nối đến server", style: TextStyle(color: Colors.white)), backgroundColor: Colors.red),
       );
     } finally {
       setState(() => _isLoading = false);

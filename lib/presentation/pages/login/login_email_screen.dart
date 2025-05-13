@@ -10,7 +10,7 @@ import 'package:untitled/navigations/tabbar.dart';
 
 
 class LoginEmailScreen extends StatefulWidget {
-  const LoginEmailScreen({Key? key}) : super(key: key);
+  const LoginEmailScreen({super.key});
 
   @override
   State<LoginEmailScreen> createState() => _LoginEmailScreenState();
@@ -28,7 +28,7 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
       _isLoading = true;
     });
 
-    const String apiUrl = "http://10.0.2.2:8080/auth/login"; // Địa chỉ backend
+    const String apiUrl = "http://10.0.2.2:8080/app/auth/login"; // Địa chỉ backend
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
@@ -55,7 +55,7 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => Tabbar(),
+            builder: (context) => const Tabbar(),
           ),
         );
       } else {

@@ -45,11 +45,20 @@ class MusicItem {
   });
 
   factory MusicItem.fromJson(Map<String, dynamic> json) {
+    final authorsData = json['authors'];
+    List<Author> authorsList;
+    if (authorsData is String) {
+      authorsList = [Author(id: 0, name: authorsData)];
+    } else if (authorsData is List) {
+      authorsList = authorsData.map((x) => Author.fromJson(x)).toList();
+    } else {
+      authorsList = [];
+    }
     return MusicItem(
       id: json['id'],
       title: json['title'],
       imageUrl: json['imageUrl'],
-      authors: List<Author>.from(json['authors'].map((x) => Author.fromJson(x))),
+      authors: authorsList,
     );
   }
 }
@@ -64,6 +73,29 @@ class Author {
     return Author(
       id: json['id'],
       name: json['name'],
+    );
+  }
+}
+
+class RecentMusic {
+  final int id;
+  final String title;
+  final String imageUrl;
+  final String authors;
+
+  RecentMusic({
+    required this.id,
+    required this.title,
+    required this.imageUrl,
+    required this.authors,
+  });
+
+  factory RecentMusic.fromJson(Map<String, dynamic> json) {
+    return RecentMusic(
+      id: json['id'] ?? 0,
+      title: json['title'] ?? '',
+      imageUrl: json['imageUrl'] ?? '',
+      authors: json['authors'] ?? '',
     );
   }
 }

@@ -12,16 +12,16 @@ class StartScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
           children: [
-            Expanded(
+            const Expanded(
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Logo Spotify
                     LogoWidget(),
-                    const SizedBox(height: 18),
+                    SizedBox(height: 18),
                     // Tiêu đề
-                    const Text(
+                    Text(
                       "Millions of songs.\nFree on Spotify.",
                       textAlign: TextAlign.center,
                       style: TextStyle(

@@ -16,7 +16,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: DrawerView(),
+      drawer: const DrawerView(),
       body: Stack(
         children: [
           Container(
@@ -36,7 +36,7 @@ class _SearchPageState extends State<SearchPage> {
           SafeArea(child: ListView(
             physics: const BouncingScrollPhysics(),
             children: [
-              Padding(
+              const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

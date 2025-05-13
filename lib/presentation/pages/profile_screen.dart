@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -29,7 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return;
     }
 
-    const String apiUrl = "http://10.0.2.2:8080/auth/profile";
+    const String apiUrl = "http://10.0.2.2:8080/app/auth/profile";
 
     try {
       final response = await http.get(
@@ -116,9 +116,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           userName,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        Text(
+        const Text(
           '0 người theo dõi • Đang theo dõi 0',
-          style: const TextStyle(fontSize: 14, color: Colors.white70),
+          style: TextStyle(fontSize: 14, color: Colors.white70),
         ),
         const SizedBox(height: 10),
         Row(

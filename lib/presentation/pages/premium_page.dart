@@ -54,7 +54,7 @@ class PremiumPageState extends State<PremiumPage> {
     return Scaffold(
       body: Stack(
         children: [
-          Container(
+          SizedBox(
             width: MediaQuery.of(context).size.width,
             child: ShaderMask(
               shaderCallback: (Rect bounds) {
@@ -81,7 +81,7 @@ class PremiumPageState extends State<PremiumPage> {
           SafeArea(
               child: SingleChildScrollView(
             controller: scrollController,
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             child: Column(children: [
               Container(
                 width: MediaQuery.of(context).size.width,
@@ -96,27 +96,27 @@ class PremiumPageState extends State<PremiumPage> {
                   ),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.only(top: 40),
+                  padding: const EdgeInsets.only(top: 40),
                   child: Column(
                     children: [
                       SizedBox(
                         height: initialSize - 50,
                       ),
                       Padding(
-                          padding: EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(10),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Row(
                                 children: [
-                                  Image(
+                                  const Image(
                                     image: AssetImage(
                                         'assets/image/spotify_logo.png'),
                                     width: 30,
                                     height: 30,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
                                   Text(
@@ -127,31 +127,31 @@ class PremiumPageState extends State<PremiumPage> {
                                   )
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 20,
                               ),
                               Text(
                                 'Nghe không giới hạn. Dùng thử Premium Individual trong 3 tháng với giá 50.000₫ trên Spotify.',
                                 style: Pallete.textApp(fontSize: 20),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 20,
                               ),
                               ButtonLarge(
                                 text: 'Dùng thử 3 tháng với 59.000₫',
                                 style: Pallete.textApp(color: Colors.black),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 15,
                               ),
                               Text.rich(TextSpan(
                                 children: [
-                                  TextSpan(
+                                  const TextSpan(
                                       text:
                                           '50.000₫ cho 3 tháng, sau đó là 59.000₫/tháng. Chỉ áp dụng ưu đãi nếu bạn đăng ký qua Spotify và chưa từng dùng gói Premium. Các ưu đãi qua Google Play có thể khác.'),
-                                  TextSpan(
+                                  const TextSpan(
                                       text: 'Có thể áp dụng Điều khoản /n'),
-                                  TextSpan(
+                                  const TextSpan(
                                       text:
                                           'Ưu đãi kết thúc vào ngày 2 tháng 4, 2025')
                                 ],
@@ -160,7 +160,7 @@ class PremiumPageState extends State<PremiumPage> {
                                     color: Colors.white60,
                                     fontWeight: FontWeight.w600),
                               )),
-                              SizedBox(height: 15,),
+                              const SizedBox(height: 15,),
                               Container(
                                 decoration: BoxDecoration(
                                     color: Colors.white12,
@@ -172,11 +172,11 @@ class PremiumPageState extends State<PremiumPage> {
                                       'Lý do nên dùng gói Premium',
                                       style: Pallete.textApp(fontSize: 17),
                                     )),
-                                    Divider(
+                                    const Divider(
                                       color: Colors.white12,
                                     ),
                                     ListTile(
-                                      leading: Icon(CupertinoIcons.shuffle),
+                                      leading: const Icon(CupertinoIcons.shuffle),
                                       title: Text(
                                         'Phát nhạc theo thứ tự bất kỳ',
                                         style: Pallete.textApp(
@@ -185,7 +185,7 @@ class PremiumPageState extends State<PremiumPage> {
                                       ),
                                     ),
                                     ListTile(
-                                      leading: Icon(Icons.downloading_rounded),
+                                      leading: const Icon(Icons.downloading_rounded),
                                       title: Text(
                                         'Tải xuống để nghe không cần mạng',
                                         style: Pallete.textApp(
@@ -194,7 +194,7 @@ class PremiumPageState extends State<PremiumPage> {
                                       ),
                                     ),
                                     ListTile(
-                                      leading: Icon(Icons.headphones_outlined),
+                                      leading: const Icon(Icons.headphones_outlined),
                                       title: Text(
                                         'Chất lượng âm thanh cao',
                                         style: Pallete.textApp(
@@ -203,7 +203,7 @@ class PremiumPageState extends State<PremiumPage> {
                                       ),
                                     ),
                                     ListTile(
-                                      leading: Icon(Icons.people_outline),
+                                      leading: const Icon(Icons.people_outline),
                                       title: Text(
                                         'Nghe cùng bạn bè theo thời gian thực',
                                         style: Pallete.textApp(
@@ -212,7 +212,7 @@ class PremiumPageState extends State<PremiumPage> {
                                       ),
                                     ),
                                     ListTile(
-                                      leading: Icon(CupertinoIcons.arrow_swap),
+                                      leading: const Icon(CupertinoIcons.arrow_swap),
                                       title: Text(
                                         'Sắp xếp theo danh sách chờ',
                                         style: Pallete.textApp(
@@ -223,14 +223,14 @@ class PremiumPageState extends State<PremiumPage> {
                                   ],
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 30,
                               ),
                               Text(
                                 'Các gói có sẵn',
                                 style: Pallete.textApp(fontSize: 20),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 25,
                               ),
                               Container(
@@ -251,27 +251,27 @@ class PremiumPageState extends State<PremiumPage> {
                                         style: Pallete.textApp(fontSize: 17),
                                       ),
                                     ),
-                                    Divider(
+                                    const Divider(
                                       color: Colors.white12,
                                       thickness: 2,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
-                                    BulletPoint(
+                                    const BulletPoint(
                                         text:
                                             '1 tài khoản Premium chỉ dành cho thiết bị'),
-                                    BulletPoint(
+                                    const BulletPoint(
                                         text:
                                             'Nghe tối đa 30 bài hát trên 1 thiết bị khi không có kết nối mạng'),
-                                    BulletPoint(text: 'Thanh toán một lần'),
-                                    BulletPoint(
+                                    const BulletPoint(text: 'Thanh toán một lần'),
+                                    const BulletPoint(
                                         text: 'Chất lượng âm thanh cơ bản'),
-                                    SizedBox(height: 20,),
+                                    const SizedBox(height: 20,),
                                     SizedBox(width: MediaQuery.of(context).size.width - 80,
                                       child:
                                       ButtonLarge(text: 'Mua Premium Mini', color: Colors.lightGreenAccent, style: Pallete.textApp(color: Colors.black),),),
-                                    SizedBox(height: 10,),
+                                    const SizedBox(height: 10,),
                                     GestureDetector(
                                       // onTap: () async {
                                       //   final Uri url = Uri.parse("https://example.com/terms");
@@ -311,17 +311,17 @@ class PremiumPageState extends State<PremiumPage> {
 class BulletPoint extends StatelessWidget {
   final String text;
 
-  const BulletPoint({required this.text});
+  const BulletPoint({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 30),
+      padding: const EdgeInsets.only(left: 30),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('•'),
-          SizedBox(
+          const Text('•'),
+          const SizedBox(
             width: 15,
           ),
           Expanded(
@@ -329,7 +329,7 @@ class BulletPoint extends StatelessWidget {
             text,
             style: Pallete.textApp(fontSize: 15, fontWeight: FontWeight.w500),
           )),
-          SizedBox(
+          const SizedBox(
             height: 10,
           )
         ],

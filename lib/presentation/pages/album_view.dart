@@ -65,7 +65,7 @@ class _AlbumViewState extends State<AlbumView> {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(.5),
-                          offset: Offset(0, 20),
+                          offset: const Offset(0, 20),
                           blurRadius: 32,
                           spreadRadius: 16,
                         )
@@ -88,7 +88,7 @@ class _AlbumViewState extends State<AlbumView> {
           SafeArea(
             child: SingleChildScrollView(
               controller: scrollController,
-              physics: BouncingScrollPhysics(),
+              physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
                   Container(
@@ -109,15 +109,15 @@ class _AlbumViewState extends State<AlbumView> {
                       child: Column(
                         children: [
                           SizedBox(height: initialSize + 32),
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
+                          const Padding(
+                            padding: EdgeInsets.all(16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum",
                                 ),
-                                const SizedBox(height: 8),
+                                SizedBox(height: 8),
                                 Row(
                                   children: [
                                     Image(
@@ -125,21 +125,21 @@ class _AlbumViewState extends State<AlbumView> {
                                       width: 100,
                                       height: 100,
                                     ),
-                                    const SizedBox(width: 8),
+                                    SizedBox(width: 8),
                                   ],
                                 ),
-                                const SizedBox(height: 8),
+                                SizedBox(height: 8),
                                 Text(
                                   "1,888,132 likes 5h 3m",
                                 ),
-                                const SizedBox(height: 16),
+                                SizedBox(height: 16),
                                 Stack(
                                   clipBehavior: Clip.none,
                                   children: [
                                     Row(
                                       children: [
                                         Icon(Icons.favorite),
-                                        const SizedBox(width: 16),
+                                        SizedBox(width: 16),
                                         Icon(Icons.more_horiz),
                                       ],
                                     ),
@@ -153,15 +153,15 @@ class _AlbumViewState extends State<AlbumView> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     color: Colors.black,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                             "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"),
                         const SizedBox(height: 32),
-                        Text(
+                        const Text(
                           "You might also like",
                         ),
                         Padding(
@@ -172,30 +172,12 @@ class _AlbumViewState extends State<AlbumView> {
                               AlbumCard(
                                 size: cardSize,
                                 label: "Get Turnt",
-                                image: AssetImage("assets/image/album3.jpg"),
+                                image: const AssetImage("assets/image/album3.jpg"),
                               ),
                               AlbumCard(
                                 size: cardSize,
                                 label: "Get Turnt",
-                                image: AssetImage("assets/image/album5.jpg"),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              AlbumCard(
-                                size: cardSize,
-                                label: "Get Turnt",
-                                image: AssetImage("assets/image/album6.jpg"),
-                              ),
-                              AlbumCard(
-                                size: cardSize,
-                                label: "Get Turnt",
-                                image: AssetImage("assets/image/album5.jpg"),
+                                image: const AssetImage("assets/image/album5.jpg"),
                               ),
                             ],
                           ),
@@ -208,12 +190,30 @@ class _AlbumViewState extends State<AlbumView> {
                               AlbumCard(
                                 size: cardSize,
                                 label: "Get Turnt",
-                                image: AssetImage("assets/image/album1.jpg"),
+                                image: const AssetImage("assets/image/album6.jpg"),
                               ),
                               AlbumCard(
                                 size: cardSize,
                                 label: "Get Turnt",
-                                image: AssetImage("assets/image/album4.jpg"),
+                                image: const AssetImage("assets/image/album5.jpg"),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              AlbumCard(
+                                size: cardSize,
+                                label: "Get Turnt",
+                                image: const AssetImage("assets/image/album1.jpg"),
+                              ),
+                              AlbumCard(
+                                size: cardSize,
+                                label: "Get Turnt",
+                                image: const AssetImage("assets/image/album4.jpg"),
                               ),
                             ],
                           ),
@@ -229,16 +229,16 @@ class _AlbumViewState extends State<AlbumView> {
           Positioned(
               child: Container(
             child: AnimatedContainer(
-              duration: Duration(milliseconds: 250),
+              duration: const Duration(milliseconds: 250),
               color: showTopBar
-                  ? Color(0xFFC61855).withOpacity(1)
-                  : Color(0xFFC61855).withOpacity(0),
-              padding: EdgeInsets.symmetric(
+                  ? const Color(0xFFC61855).withOpacity(1)
+                  : const Color(0xFFC61855).withOpacity(0),
+              padding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 8,
               ),
               child: SafeArea(
-                child: Container(
+                child: SizedBox(
                   height: 40,
                   width: MediaQuery.of(context).size.width,
                   child: Stack(
@@ -251,16 +251,16 @@ class _AlbumViewState extends State<AlbumView> {
                           onTap: () {
                             Navigator.pop(context);
                           },
-                          child: Icon(
+                          child: const Icon(
                             Icons.keyboard_arrow_left,
                             size: 38,
                           ),
                         ),
                       ),
                       AnimatedOpacity(
-                        duration: Duration(milliseconds: 250),
+                        duration: const Duration(milliseconds: 250),
                         opacity: showTopBar ? 1 : 0,
-                        child: Text(
+                        child: const Text(
                           "Ophelia",
                         ),
                       ),
@@ -275,11 +275,11 @@ class _AlbumViewState extends State<AlbumView> {
                               width: 64,
                               height: 64,
                               alignment: Alignment.center,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Color(0xff14D860),
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.play_arrow,
                                 size: 38,
                               ),
@@ -287,11 +287,11 @@ class _AlbumViewState extends State<AlbumView> {
                             Container(
                               width: 24,
                               height: 24,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.white,
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.shuffle,
                                 color: Colors.black,
                                 size: 14,

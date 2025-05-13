@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:untitled/providers/sign_up_provider.dart';
 
 class SignUpDateOfBirthScreen extends StatefulWidget {
-  const SignUpDateOfBirthScreen({Key? key}) : super(key: key);
+  const SignUpDateOfBirthScreen({super.key});
 
   @override
   State<SignUpDateOfBirthScreen> createState() => _SignUpDateOfBirthScreenState();

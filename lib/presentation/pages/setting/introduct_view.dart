@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AboutPage extends StatelessWidget {
-  const AboutPage({Key? key}) : super(key: key);
+  const AboutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +34,13 @@ class AboutPage extends StatelessWidget {
 
   // Widget tạo ListTile cho mục phiên bản
   Widget _buildVersionTile() {
-    return Column(
+    return const Column(
       children: [
         ListTile(
-          title: const Text('Phiên bản', style: TextStyle(fontSize: 16)),
-          trailing: const Text('1.0.00.001', style: TextStyle(fontSize: 14, color: Colors.white70)),
+          title: Text('Phiên bản', style: TextStyle(fontSize: 16)),
+          trailing: Text('1.0.00.001', style: TextStyle(fontSize: 14, color: Colors.white70)),
         ),
-        const Divider(color: Colors.white24, thickness: 0.5),
+        Divider(color: Colors.white24, thickness: 0.5),
       ],
     );
   }

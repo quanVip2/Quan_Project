@@ -99,7 +99,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       birthday = "$_selectedYear-${_selectedMonth!.toString().padLeft(2, '0')}-${_selectedDay!.toString().padLeft(2, '0')}";
     }
 
-    const String apiUrl = "http://10.0.2.2:8080/user/update";
+    const String apiUrl = "http://10.0.2.2:8080/app/user/update";
     final body = {
       "fullName": _fullNameController.text.trim(),
       "gender": _selectedGender.toLowerCase(),

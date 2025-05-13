@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'editProfile_view.dart';
 
 class AccountPage extends StatefulWidget {
-  const AccountPage({Key? key}) : super(key: key);
+  const AccountPage({super.key});
 
   @override
   _AccountPageState createState() => _AccountPageState();
@@ -30,7 +30,7 @@ class _AccountPageState extends State<AccountPage> {
       return;
     }
 
-    const String apiUrl = "http://10.0.2.2:8080/auth/profile";
+    const String apiUrl = "http://10.0.2.2:8080/app/auth/profile";
 
     try {
       final response = await http.get(
@@ -158,9 +158,9 @@ class _AccountPageState extends State<AccountPage> {
           color: Colors.grey[900],
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
+          children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

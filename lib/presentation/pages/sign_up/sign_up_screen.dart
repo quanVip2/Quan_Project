@@ -25,7 +25,7 @@ class SignUpScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Logo
-            LogoWidget(),
+            const LogoWidget(),
             const SizedBox(height: 18),
             // Tiêu đề
             const Text(

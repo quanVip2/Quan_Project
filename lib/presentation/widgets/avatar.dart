@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'drawer_view.dart';
 
 class AvatarCircle extends StatelessWidget {
   final ImageProvider image;

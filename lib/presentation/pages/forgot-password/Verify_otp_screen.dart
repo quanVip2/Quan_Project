@@ -4,7 +4,7 @@ import 'dart:convert';
 
 class VerifyOtpScreen extends StatefulWidget {
   final String email;
-  const VerifyOtpScreen({Key? key, required this.email}) : super(key: key);
+  const VerifyOtpScreen({super.key, required this.email});
 
   @override
   _VerifyOtpScreenState createState() => _VerifyOtpScreenState();

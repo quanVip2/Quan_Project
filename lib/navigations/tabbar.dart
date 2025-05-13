@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/features/music/data/repositories/music_rewind.dart';
 import 'package:untitled/presentation/pages/home_page.dart';
 import 'package:untitled/presentation/pages/search_page.dart';
 import 'package:untitled/presentation/pages/library_page.dart';
 import 'package:untitled/presentation/pages/premium_page.dart';
 import 'package:untitled/presentation/widgets/mini_player_widget.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:untitled/features/music/data/models/music_detail_model.dart';
 import 'package:untitled/features/music/data/repositories/music_player_controller.dart';
-import 'package:untitled/features/music/data/repositories/music_next.dart';
 
 class Tabbar extends StatefulWidget {
   const Tabbar({super.key});

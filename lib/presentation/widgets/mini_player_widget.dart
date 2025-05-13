@@ -27,12 +27,26 @@ class _MiniPlayerWidgetState extends State<MiniPlayerWidget> {
   void initState() {
     super.initState();
     music = widget.currentMusic;
-
+    controller.currentTrackNotifier.addListener(_onTrackChanged);
     controller.getCurrentMusic().then((m) {
       if (m != null && mounted) {
         setState(() => music = m);
       }
     });
+  }
+
+  void _onTrackChanged() {
+    final current = controller.currentTrackNotifier.value;
+    if (current != null && mounted) {
+      setState(() => music = current);
+      widget.onMusicChanged(current);
+    }
+  }
+
+  @override
+  void dispose() {
+    controller.currentTrackNotifier.removeListener(_onTrackChanged);
+    super.dispose();
   }
 
   @override

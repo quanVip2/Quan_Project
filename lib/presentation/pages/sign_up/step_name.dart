@@ -4,7 +4,7 @@ import 'package:untitled/providers/sign_up_provider.dart';
 import 'package:untitled/navigations/tabbar.dart';
 
 class SignUpNameScreen extends StatefulWidget {
-  const SignUpNameScreen({Key? key}) : super(key: key);
+  const SignUpNameScreen({super.key});
 
   @override
   State<SignUpNameScreen> createState() => _SignUpNameScreenState();
@@ -192,12 +192,12 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
                     );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Đăng ký thất bại, vui lòng thử lại")),
+                        const SnackBar(content: Text("Đăng ký thất bại, vui lòng thử lại")),
                       );
                     }
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Đăng ký thất bại, vui lòng thử lại")),
+                      const SnackBar(content: Text("Đăng ký thất bại, vui lòng thử lại")),
                     );
                     print(e); // In ra để debug lỗi
                   }

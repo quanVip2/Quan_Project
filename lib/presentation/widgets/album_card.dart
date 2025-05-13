@@ -8,7 +8,7 @@ class AlbumCard extends StatelessWidget{
   final double size;
   // final Function onTap;
 
-  const AlbumCard({Key? key, required this.image, required this.label, this.size = 120,   }) : super(key:key);
+  const AlbumCard({super.key, required this.image, required this.label, this.size = 120,   });
 
   @override
   Widget build(BuildContext context) {

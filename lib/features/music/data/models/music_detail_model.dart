@@ -7,6 +7,11 @@ class MusicDetail {
   final String imageUrl;
   final List<Author> authors;
   final List<Category> categories;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final int? albumId;
+  final int? listenCount;
+  final String? nation;
 
   MusicDetail({
     required this.id,
@@ -17,6 +22,11 @@ class MusicDetail {
     required this.imageUrl,
     required this.authors,
     required this.categories,
+    this.createdAt,
+    this.updatedAt,
+    this.albumId,
+    this.listenCount,
+    this.nation,
   });
 
   factory MusicDetail.fromJson(Map<String, dynamic> json) {
@@ -42,6 +52,11 @@ class MusicDetail {
       imageUrl: music['imageUrl'],
       authors: authors,
       categories: categories,
+      createdAt: music['createdAt'] != null ? DateTime.tryParse(music['createdAt']) : null,
+      updatedAt: music['updatedAt'] != null ? DateTime.tryParse(music['updatedAt']) : null,
+      albumId: music['albumId'],
+      listenCount: music['listenCount'],
+      nation: music['nation'],
     );
   }
 }

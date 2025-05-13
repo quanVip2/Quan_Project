@@ -5,7 +5,8 @@ import 'package:untitled/core/theme/chip_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled/features/music/data/models/music.dart'; 
 import 'package:untitled/features/bloc/auth_bloc.dart'; 
-import 'package:untitled/features/bloc/auth_state.dart'; 
+import 'package:untitled/features/bloc/auth_state.dart';
+import 'package:untitled/presentation/pages/album_detail_page.dart'; 
 import 'package:untitled/presentation/widgets/drawer_view.dart';
 import 'package:untitled/presentation/widgets/avatar.dart';
 import 'package:untitled/presentation/widgets/album_card.dart';
@@ -15,10 +16,16 @@ import 'package:just_audio/just_audio.dart';
 import 'package:untitled/features/music/data/models/music_detail_model.dart';
 import 'package:untitled/features/music/data/repositories/music_service.dart';
 import 'package:untitled/features/music/data/repositories/music_pading.dart';
+import '../../features/music/data/models/music.dart';
+import 'package:flutter/material.dart';
+import '../../presentation/widgets/album_list_widget.dart';
+import '../../features/music/data/models/album_model.dart';
+import '../../features/music/data/repositories/album_repository.dart';
+import '../../presentation/widgets/recent_albums_widget.dart';
 
 class HomePage extends StatefulWidget {
   final Function(MusicDetail)? onTrackSelected; // 👈 thêm dòng này
-  const HomePage({Key? key, this.onTrackSelected}) : super(key: key); 
+  const HomePage({super.key, this.onTrackSelected}); 
 
   @override
   State<StatefulWidget> createState() => HomePageState();
@@ -29,14 +36,16 @@ class HomePageState extends State<HomePage> {
   bool isLoading = false;
   MusicDetail? _currentTrack;
   final AudioPlayer _player = AudioPlayer();
+  late Future<List<AlbumModel>> albumsFuture;
 
   @override
   void initState() {
     super.initState();
     fetchMusicList();
+    albumsFuture = fetchAlbums();
   }
 
-    Future<void> fetchMusicList() async {
+  Future<void> fetchMusicList() async {
     setState(() => isLoading = true);
     try {
       final pagingService = MusicPagingService();
@@ -49,6 +58,10 @@ class HomePageState extends State<HomePage> {
     }
   }
 
+  Future<List<AlbumModel>> fetchAlbums() async {
+    final repo = AlbumRepository();
+    return await repo.getAlbums(context);
+  }
 
   void playMusic(MusicItem item) async {
     final musicService = MusicService();
@@ -73,7 +86,6 @@ class HomePageState extends State<HomePage> {
       debugPrint('Lỗi khi chuyển sang trang phát nhạc: $e');
     }
   }
-
 
   @override
   void dispose() {
@@ -122,11 +134,11 @@ class HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
+                      children: [
                         Text("Recently Played" , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                         Row(
                           children: [
@@ -138,41 +150,92 @@ class HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  // const Padding(
-                  //   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  //   child: 
-                  //     Text("Recently Played", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      
-                  // ),
-                  SizedBox(
-                    height: 220,
-                    child: isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : musics.isEmpty
-                            ? const Center(child: Text("No music found."))
-                            : ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: musics.length,
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                itemBuilder: (context, index) {
-                                  final music = musics[index];
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 12),
-                                    child: SongCard(
-                                      imageUrl: music.imageUrl,
-                                      title: music.title,
-                                      artist: music.authors.map((a) => a.name).join(", "),
-                                      onTap: () => playMusic(music),
+                  // Widget Recently Played
+                  FutureBuilder<List<RecentMusic>>(
+                    future: MusicService().fetchRecentlyPlayed(context),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Lỗi: \\${snapshot.error}', style: TextStyle(color: Colors.red)));
+                      }
+                      final musics = snapshot.data ?? [];
+                      if (musics.isEmpty) {
+                        return const Center(child: Text('Chưa có bài hát nào', style: TextStyle(color: Colors.white70)));
+                      }
+                      return SizedBox(
+                        height: 220,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: musics.length,
+                          separatorBuilder: (_, __) => const SizedBox(width: 16),
+                          itemBuilder: (context, index) {
+                            final song = musics[index];
+                            return GestureDetector(
+                              onTap: () {
+                                if (song.id != 0) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => MusicPlayerPage(musicId: song.id),
                                     ),
                                   );
-                                },
+                                }
+                              },
+                              child: Column(
+                                children: [
+                                  song.imageUrl.isNotEmpty
+                                      ? ClipRRect(
+                                          borderRadius: BorderRadius.circular(8),
+                                          child: Image.network(song.imageUrl, width: 150, height: 150, fit: BoxFit.cover),
+                                        )
+                                      : Container(
+                                          width: 64,
+                                          height: 64,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[800],
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: const Icon(Icons.music_note, color: Colors.white),
+                                        ),
+                                  const SizedBox(height: 8),
+                                  SizedBox(
+                                    width: 64,
+                                    child: Text(
+                                      song.title,
+                                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 64,
+                                    child: Text(
+                                      song.authors is List
+                                          ? (song.authors as List).map((a) => a.name).join(", ")
+                                          : song.authors.toString(),
+                                      style: const TextStyle(color: Colors.white70, fontSize: 11),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ],
                               ),
+                            );
+                          },
+                        ),
+                      );
+                    },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
+                      children: [
                         Text("Tuyển tập hàng đầu của bạn ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                         Row(
                           children: [
@@ -184,11 +247,42 @@ class HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  SizedBox(
+                    height: 220,
+                    child: isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : musics.isEmpty
+                            ? const Center(child: Text("No music found."))
+                            : ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                itemCount: musics.length,
+                                separatorBuilder: (_, __) => const SizedBox(width: 16),
+                                itemBuilder: (context, index) {
+                                  final song = musics[index];
+                                  return SongCard(
+                                    imageUrl: song.imageUrl,
+                                    title: song.title,
+                                    artist: song.authors is List ? (song.authors as List).map((a) => a.name).join(', ') : song.authors.toString(),
+                                    onTap: () {
+                                      if (song.id != 0) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => MusicPlayerPage(musicId: song.id),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  );
+                                },
+                              ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
+                      children: [
                         Text("Phổ biến nhất" , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                         Row(
                           children: [
@@ -200,11 +294,12 @@ class HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
+                      children: [
                         Text("Mới Phát Hành" , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                         Row(
                           children: [
@@ -216,11 +311,11 @@ class HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
+                      children: [
                         Text("Dành cho fan của Kendrick Lamar" , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                         Row(
                           children: [
@@ -231,6 +326,49 @@ class HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Album đã nghe gần đây", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        Row(
+                          children: [
+                            Icon(Icons.history),
+                            SizedBox(width: 16),
+                            Icon(Icons.settings),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  FutureBuilder<List<RecentAlbum>>(
+                    future: AlbumRepository().fetchRecentlyPlayedAlbums(context),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Lỗi: ${snapshot.error}', style: TextStyle(color: Colors.red)));
+                      }
+                      final albums = snapshot.data ?? [];
+                      if (albums.isEmpty) {
+                        return const Center(child: Text('Chưa có album nào', style: TextStyle(color: Colors.white70)));
+                      }
+                      return RecentAlbumsWidget(
+                        albums: albums,
+                        onAlbumTap: (album) {
+                          print('Album id: ${album.id}');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AlbumDetailPage(albumId: album.id),
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
                   const SizedBox(height: 100),
                 ],
@@ -261,7 +399,9 @@ class HomePageState extends State<HomePage> {
                         children: [
                           Text(_currentTrack!.title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                           Text(
-                            _currentTrack!.authors.map((a) => a.name).join(", "),
+                            _currentTrack!.authors is List
+                                ? (_currentTrack!.authors as List).map((a) => a.name).join(", ")
+                                : _currentTrack!.authors.toString(),
                             style: const TextStyle(color: Colors.white70, fontSize: 12),
                           ),
                         ],

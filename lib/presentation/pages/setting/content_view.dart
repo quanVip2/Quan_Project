@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ContentDisplaySettingsPage extends StatefulWidget {
-  const ContentDisplaySettingsPage({Key? key}) : super(key: key);
+  const ContentDisplaySettingsPage({super.key});
 
   @override
   State<ContentDisplaySettingsPage> createState() => _ContentDisplaySettingsPageState();
