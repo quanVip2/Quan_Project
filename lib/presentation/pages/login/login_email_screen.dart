@@ -8,7 +8,6 @@ import 'package:untitled/presentation/pages/home_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled/navigations/tabbar.dart';
 
-
 class LoginEmailScreen extends StatefulWidget {
   const LoginEmailScreen({super.key});
 
@@ -20,7 +19,8 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
   bool _obscureText = true;
   bool _isLoading = false;
 
-  final TextEditingController _emailOrUsernameController = TextEditingController();
+  final TextEditingController _emailOrUsernameController =
+      TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   Future<void> _login() async {
@@ -28,7 +28,8 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
       _isLoading = true;
     });
 
-    const String apiUrl = "http://10.0.2.2:8080/app/auth/login"; // Địa chỉ backend
+    const String apiUrl =
+        "http://192.168.0.102:8080/app/auth/login"; // Địa chỉ backend
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
@@ -48,7 +49,7 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
         await prefs.setString('auth_token', token);
 
         context.read<AuthBloc>().add(LoggedIn(token));
-        
+
         print("Token nhận được: $token");
 
         // Chuyển sang màn hình chính
@@ -72,7 +73,9 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message, style: const TextStyle(color: Colors.white)), backgroundColor: Colors.red),
+      SnackBar(
+          content: Text(message, style: const TextStyle(color: Colors.white)),
+          backgroundColor: Colors.red),
     );
   }
 
@@ -102,7 +105,10 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
           children: [
             const SizedBox(height: 20),
             const Text("Email or username",
-                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             TextField(
               controller: _emailOrUsernameController,
@@ -111,7 +117,10 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
             ),
             const SizedBox(height: 20),
             const Text("Password",
-                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             TextField(
               controller: _passwordController,
@@ -119,7 +128,9 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
               style: const TextStyle(color: Colors.white),
               decoration: _inputDecoration("Enter your password").copyWith(
                 suffixIcon: IconButton(
-                  icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off, color: Colors.white),
+                  icon: Icon(
+                      _obscureText ? Icons.visibility : Icons.visibility_off,
+                      color: Colors.white),
                   onPressed: () => setState(() => _obscureText = !_obscureText),
                 ),
               ),
@@ -132,26 +143,34 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30)),
                       ),
                       onPressed: _login,
-                      child: const Text("Log in", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      child: const Text("Log in",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
             ),
             const SizedBox(height: 10),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/forgot-password'); // Điều hướng đến màn hình quên mật khẩu
-                  },
-                  child: const Text(
-                    "Forgot Password?",
-                    style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
-                  ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context,
+                      '/forgot-password'); // Điều hướng đến màn hình quên mật khẩu
+                },
+                child: const Text(
+                  "Forgot Password?",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500),
                 ),
               ),
+            ),
           ],
         ),
       ),
@@ -164,7 +183,8 @@ class _LoginEmailScreenState extends State<LoginEmailScreen> {
       fillColor: Colors.grey[800],
       hintText: hintText,
       hintStyle: const TextStyle(color: Colors.white54),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+      border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
     );
   }
 }

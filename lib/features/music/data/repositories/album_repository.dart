@@ -8,7 +8,8 @@ import '../../../bloc/auth_bloc.dart';
 import '../../../bloc/auth_state.dart';
 
 class AlbumRepository {
-  static const String _defaultBaseUrl = 'http://10.0.2.2:8080/app'; // Thay bằng URL thật của bạn
+  static const String _defaultBaseUrl =
+      'http://192.168.0.102:8080/app'; // Thay bằng URL thật của bạn
   final String baseUrl;
 
   AlbumRepository({String? baseUrl}) : baseUrl = baseUrl ?? _defaultBaseUrl;
@@ -56,14 +57,16 @@ class AlbumRepository {
     return result;
   }
 
-  Future<List<RecentAlbum>> fetchRecentlyPlayedAlbums(BuildContext context, {int offset = 0, int limit = 8}) async {
+  Future<List<RecentAlbum>> fetchRecentlyPlayedAlbums(BuildContext context,
+      {int offset = 0, int limit = 8}) async {
     final authState = context.read<AuthBloc>().state;
     String? token;
     if (authState is AuthAuthenticated) {
       token = authState.token;
     }
 
-    final uri = Uri.parse('$baseUrl/home/recently/album?offset=$offset&limit=$limit');
+    final uri =
+        Uri.parse('$baseUrl/home/recently/album?offset=$offset&limit=$limit');
     try {
       final resp = await http.get(uri, headers: {
         'Authorization': token != null ? 'Bearer $token' : '',

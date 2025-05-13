@@ -19,7 +19,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
       _isLoading = true;
     });
 
-    const String apiUrl = "http://10.0.2.2:8080/auth/check-otp";
+    const String apiUrl = "http://192.168.0.102:8080/auth/check-otp";
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
@@ -115,13 +115,18 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                   ? const CircularProgressIndicator(color: Colors.white)
                   : ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1DB954), // Spotify Green
+                        backgroundColor:
+                            const Color(0xFF1DB954), // Spotify Green
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30)),
                       ),
                       onPressed: _verifyOtp,
-                      child: const Text("Verify OTP", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      child: const Text("Verify OTP",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
             ),
           ],

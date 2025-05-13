@@ -8,7 +8,7 @@ import '../models/music_detail_model.dart';
 class MusicRewindRepository {
   final String baseUrl;
 
-  MusicRewindRepository({this.baseUrl = 'http://10.0.2.2:8080/app'});
+  MusicRewindRepository({this.baseUrl = 'http://192.168.0.102:8080/app'});
 
   Future<MusicDetail> fetchRewindMusic({
     required int currentMusicId,

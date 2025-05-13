@@ -5,11 +5,10 @@ import 'package:http/http.dart' as http;
 
 import '../models/music_detail_model.dart';
 
-
 class MusicNextRepository {
   final String baseUrl;
 
-  MusicNextRepository({this.baseUrl = 'http://10.0.2.2:8080/app'});
+  MusicNextRepository({this.baseUrl = 'http://192.168.0.102:8080/app'});
 
   Future<MusicDetail> fetchNextMusic({
     required int currentMusicId,

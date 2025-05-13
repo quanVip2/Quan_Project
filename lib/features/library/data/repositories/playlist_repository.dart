@@ -7,7 +7,7 @@ import '../../../bloc/auth_state.dart';
 import '../models/playlist_model.dart';
 
 class PlaylistRepository {
-  final String baseUrl = 'http://10.0.2.2:8080/app';
+  final String baseUrl = 'http://192.168.0.102:8080/app';
 
   String? _getToken(BuildContext context) {
     final state = context.read<AuthBloc>().state;
@@ -17,7 +17,8 @@ class PlaylistRepository {
     return null;
   }
 
-  Future<List<PlaylistModel>> getPlaylistsByUserId(BuildContext context, String userId) async {
+  Future<List<PlaylistModel>> getPlaylistsByUserId(
+      BuildContext context, String userId) async {
     final token = _getToken(context);
     try {
       final response = await http.get(
@@ -43,7 +44,6 @@ class PlaylistRepository {
     }
   }
 
-
   Future<void> createPlaylist(BuildContext context) async {
     final token = _getToken(context);
     try {
@@ -62,7 +62,8 @@ class PlaylistRepository {
     }
   }
 
-  Future<void> addMusicToPlaylist(BuildContext context, int playlistId, int musicId) async {
+  Future<void> addMusicToPlaylist(
+      BuildContext context, int playlistId, int musicId) async {
     final token = _getToken(context);
     if (token == null) {
       throw Exception('Không tìm thấy token xác thực');
@@ -88,14 +89,16 @@ class PlaylistRepository {
       } else if (response.statusCode == 404) {
         throw Exception('Không tìm thấy playlist hoặc bài hát');
       } else {
-        throw Exception('Không thể thêm bài hát vào playlist: ${response.body}');
+        throw Exception(
+            'Không thể thêm bài hát vào playlist: ${response.body}');
       }
     } catch (e) {
       throw Exception('Lỗi khi thêm bài hát vào playlist: $e');
     }
   }
 
-  Future<List<Map<String, dynamic>>> getMusicsByPlaylistId(BuildContext context, int playlistId) async {
+  Future<List<Map<String, dynamic>>> getMusicsByPlaylistId(
+      BuildContext context, int playlistId) async {
     final token = _getToken(context);
     if (token == null) {
       throw Exception('Không tìm thấy token xác thực');
@@ -113,14 +116,17 @@ class PlaylistRepository {
         List<dynamic> data;
         if (decoded is Map && decoded['data'] != null) {
           data = decoded['data'];
-        } else if (decoded is Map && decoded['body'] != null && decoded['body']['data'] != null) {
+        } else if (decoded is Map &&
+            decoded['body'] != null &&
+            decoded['body']['data'] != null) {
           data = decoded['body']['data'];
         } else {
           data = [];
         }
         return List<Map<String, dynamic>>.from(data);
       } else if (response.statusCode == 401) {
-        throw Exception('Bạn chưa đăng nhập hoặc phiên đăng nhập đã hết hạn (401).');
+        throw Exception(
+            'Bạn chưa đăng nhập hoặc phiên đăng nhập đã hết hạn (401).');
       } else {
         throw Exception('Lỗi server: ${response.statusCode}');
       }
@@ -159,7 +165,8 @@ class PlaylistRepository {
     }
   }
 
-  Future<bool> updatePlaylistInfo(BuildContext context, int playlistId, String newName, String newDescription) async {
+  Future<bool> updatePlaylistInfo(BuildContext context, int playlistId,
+      String newName, String newDescription) async {
     final token = _getToken(context);
     if (token == null) {
       throw Exception('Không tìm thấy token xác thực');
@@ -201,7 +208,8 @@ class PlaylistRepository {
     }
   }
 
-  Future<void> deleteMusicFromLikeMusic(BuildContext context, int musicId) async {
+  Future<void> deleteMusicFromLikeMusic(
+      BuildContext context, int musicId) async {
     final token = _getToken(context);
     if (token == null) {
       throw Exception('Không tìm thấy token xác thực');
@@ -222,7 +230,8 @@ class PlaylistRepository {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getLikedMusics(BuildContext context) async {
+  Future<List<Map<String, dynamic>>> getLikedMusics(
+      BuildContext context) async {
     final token = _getToken(context);
     if (token == null) {
       throw Exception('Không tìm thấy token xác thực');
@@ -246,4 +255,4 @@ class PlaylistRepository {
       throw Exception('Lỗi: $e');
     }
   }
-} 
+}

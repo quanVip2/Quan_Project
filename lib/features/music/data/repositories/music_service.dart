@@ -1,32 +1,32 @@
-  import 'dart:convert';
-  import 'package:flutter/material.dart';
-  import 'package:http/http.dart' as http;
-  import '../models/music_detail_model.dart';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import '../models/music_detail_model.dart';
 
-  import 'package:flutter_bloc/flutter_bloc.dart';
-  import 'package:untitled/features/bloc/auth_bloc.dart'; 
-  import 'package:untitled/features/bloc/auth_state.dart';
-  import '../models/music.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:untitled/features/bloc/auth_bloc.dart';
+import 'package:untitled/features/bloc/auth_state.dart';
+import '../models/music.dart';
 
-  class MusicService {
-    Future<MusicDetail> fetchMusicDetail(BuildContext context, int id) async {
-      final uri = Uri.parse('http://10.0.2.2:8080/app/music/play/$id');
+class MusicService {
+  Future<MusicDetail> fetchMusicDetail(BuildContext context, int id) async {
+    final uri = Uri.parse('http://192.168.0.102:8080/app/music/play/$id');
 
-      // 🔥 Lấy token từ AuthBloc
-      final authState = context.read<AuthBloc>().state;
-      String? token;
-      if (authState is AuthAuthenticated) {
-        token = authState.token;
-      }
+    // 🔥 Lấy token từ AuthBloc
+    final authState = context.read<AuthBloc>().state;
+    String? token;
+    if (authState is AuthAuthenticated) {
+      token = authState.token;
+    }
 
-      try {
-        final resp = await http.get(uri, headers: {
-          'Authorization': token != null ? 'Bearer $token' : '',
-          'Content-Type': 'application/json',
-        });
+    try {
+      final resp = await http.get(uri, headers: {
+        'Authorization': token != null ? 'Bearer $token' : '',
+        'Content-Type': 'application/json',
+      });
 
-        debugPrint('Raw response: ${resp.body}');
-        
+      debugPrint('Raw response: ${resp.body}');
+
       if (resp.statusCode == 200) {
         final jsonResponse = jsonDecode(resp.body);
 
@@ -45,13 +45,15 @@
     }
   }
 
-  Future<List<RecentMusic>> fetchRecentlyPlayed(BuildContext context, {int offset = 0, int limit = 8}) async {
+  Future<List<RecentMusic>> fetchRecentlyPlayed(BuildContext context,
+      {int offset = 0, int limit = 8}) async {
     final authState = context.read<AuthBloc>().state;
     String? token;
     if (authState is AuthAuthenticated) {
       token = authState.token;
     }
-    final uri = Uri.parse('http://10.0.2.2:8080/app/home/recently/music?offset=$offset&limit=$limit');
+    final uri = Uri.parse(
+        'http://192.168.0.102:8080/app/home/recently/music?offset=$offset&limit=$limit');
     try {
       final resp = await http.get(uri, headers: {
         'Authorization': token != null ? 'Bearer $token' : '',

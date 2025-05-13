@@ -16,7 +16,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Future<void> _sendOtp() async {
     setState(() => _isLoading = true);
 
-    const String apiUrl = "http://10.0.2.2:8080/auth/forgot-password";
+    const String apiUrl = "http://192.168.0.102:8080/auth/forgot-password";
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
@@ -27,18 +27,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       final responseData = jsonDecode(response.body);
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(responseData["message"], style: const TextStyle(color: Colors.white)), backgroundColor: Colors.green),
+          SnackBar(
+              content: Text(responseData["message"],
+                  style: const TextStyle(color: Colors.white)),
+              backgroundColor: Colors.green),
         );
         // Điều hướng sang màn hình nhập OTP
-        Navigator.pushNamed(context, '/otp-verification', arguments: _emailController.text.trim());
+        Navigator.pushNamed(context, '/otp-verification',
+            arguments: _emailController.text.trim());
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(responseData["message"], style: const TextStyle(color: Colors.white)), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text(responseData["message"],
+                  style: const TextStyle(color: Colors.white)),
+              backgroundColor: Colors.red),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Lỗi kết nối đến server", style: TextStyle(color: Colors.white)), backgroundColor: Colors.red),
+        const SnackBar(
+            content: Text("Lỗi kết nối đến server",
+                style: TextStyle(color: Colors.white)),
+            backgroundColor: Colors.red),
       );
     } finally {
       setState(() => _isLoading = false);
@@ -64,7 +74,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           children: [
             const Text(
               "Forgot Password",
-              style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             const Text(
@@ -92,13 +105,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ? const CircularProgressIndicator(color: Colors.white)
                   : ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1DB954), // Màu xanh Spotify
+                        backgroundColor:
+                            const Color(0xFF1DB954), // Màu xanh Spotify
                         foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30)),
                       ),
                       onPressed: _sendOtp,
-                      child: const Text("Send OTP", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      child: const Text("Send OTP",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
             ),
           ],

@@ -4,7 +4,8 @@ import 'dart:convert';
 
 class ResetPasswordScreen extends StatefulWidget {
   final String token;
-  const ResetPasswordScreen({super.key, required this.token, required String email});
+  const ResetPasswordScreen(
+      {super.key, required this.token, required String email});
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -12,14 +13,15 @@ class ResetPasswordScreen extends StatefulWidget {
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   bool _isLoading = false;
 
   Future<void> _resetPassword() async {
     setState(() => _isLoading = true);
-    
+
     final response = await http.put(
-      Uri.parse("http://10.0.2.2:8080/auth/reset-password"),
+      Uri.parse("http://192.168.0.102:8080/auth/reset-password"),
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer ${widget.token}"
@@ -36,12 +38,16 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Đổi mật khẩu thành công!"), backgroundColor: Colors.green),
+        const SnackBar(
+            content: Text("Đổi mật khẩu thành công!"),
+            backgroundColor: Colors.green),
       );
       Navigator.pop(context); // Quay lại màn hình đăng nhập
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(responseData["message"] ?? "Lỗi đổi mật khẩu"), backgroundColor: Colors.red),
+        SnackBar(
+            content: Text(responseData["message"] ?? "Lỗi đổi mật khẩu"),
+            backgroundColor: Colors.red),
       );
     }
   }
@@ -53,14 +59,16 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
-        title: const Text("Đặt lại mật khẩu", style: TextStyle(color: Colors.white)),
+        title: const Text("Đặt lại mật khẩu",
+            style: TextStyle(color: Colors.white)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Mật khẩu mới", style: TextStyle(color: Colors.white, fontSize: 16)),
+            const Text("Mật khẩu mới",
+                style: TextStyle(color: Colors.white, fontSize: 16)),
             const SizedBox(height: 10),
             TextField(
               controller: _newPasswordController,
@@ -69,7 +77,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               decoration: _inputDecoration("Nhập mật khẩu mới"),
             ),
             const SizedBox(height: 20),
-            const Text("Xác nhận mật khẩu", style: TextStyle(color: Colors.white, fontSize: 16)),
+            const Text("Xác nhận mật khẩu",
+                style: TextStyle(color: Colors.white, fontSize: 16)),
             const SizedBox(height: 10),
             TextField(
               controller: _confirmPasswordController,
@@ -83,13 +92,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   ? const CircularProgressIndicator(color: Colors.white)
                   : ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1DB954), // Spotify green
+                        backgroundColor:
+                            const Color(0xFF1DB954), // Spotify green
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30)),
                       ),
                       onPressed: _resetPassword,
-                      child: const Text("Xác nhận", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      child: const Text("Xác nhận",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
             ),
           ],
@@ -104,7 +118,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       fillColor: Colors.grey[800],
       hintText: hintText,
       hintStyle: const TextStyle(color: Colors.white54),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+      border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
     );
   }
 }
