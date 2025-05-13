@@ -474,7 +474,24 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                               ),
                               IconButton(
                                 icon: const Icon(Icons.play_circle_fill, color: Colors.green, size: 44),
-                                onPressed: () {},
+                                onPressed: () async {
+                                  if (songs.isEmpty) return;
+                                  final repo = PlaylistRepository();
+                                  final firstMusicId = songs[0]['id'];
+                                  final playId = await repo.playlistPlay(context, firstMusicId, widget.playlistId);
+                                  if (playId != null) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => MusicPlayerPage(musicId: playId, playlistId: widget.playlistId),
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Không thể phát playlist này!'), backgroundColor: Colors.red),
+                                    );
+                                  }
+                                },
                               ),
                             ],
                           ),
@@ -523,7 +540,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => MusicPlayerPage(musicId: id!),
+                                      builder: (_) => MusicPlayerPage(musicId: id!, playlistId: widget.playlistId),
                                     ),
                                   );
                                 },
@@ -534,6 +551,30 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                       ],
                     ],
                   ),
+        floatingActionButton: hasSongs
+            ? FloatingActionButton(
+                backgroundColor: Colors.green,
+                child: const Icon(Icons.play_arrow, color: Colors.white, size: 36),
+                onPressed: () async {
+                  if (songs.isEmpty) return;
+                  final repo = PlaylistRepository();
+                  final firstMusicId = songs[0]['id'];
+                  final playId = await repo.playlistPlay(context, firstMusicId, widget.playlistId);
+                  if (playId != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MusicPlayerPage(musicId: playId, playlistId: widget.playlistId),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Không thể phát playlist này!'), backgroundColor: Colors.red),
+                    );
+                  }
+                },
+              )
+            : null,
       ),
     );
   }
