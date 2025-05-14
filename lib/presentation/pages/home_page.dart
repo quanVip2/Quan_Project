@@ -22,6 +22,7 @@ import '../../presentation/widgets/album_list_widget.dart';
 import '../../features/music/data/models/album_model.dart';
 import '../../features/music/data/repositories/album_repository.dart';
 import '../../presentation/widgets/recent_albums_widget.dart';
+import '../widgets/recent_authors_section.dart';
 
 class HomePage extends StatefulWidget {
   final Function(MusicDetail)? onTrackSelected; // 👈 thêm dòng này
@@ -327,6 +328,7 @@ class HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
+                  const RecentAuthorsSection(),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     child: Row(
