@@ -36,7 +36,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       return;
     }
 
-    const String apiUrl = "http://10.0.2.2:8080/auth/profile";
+    const String apiUrl = "http://10.0.2.2:8080/app/auth/profile";
     try {
       final response = await http.get(
         Uri.parse(apiUrl),
