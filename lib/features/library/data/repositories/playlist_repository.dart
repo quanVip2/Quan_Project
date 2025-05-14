@@ -255,4 +255,70 @@ class PlaylistRepository {
       throw Exception('Lỗi: $e');
     }
   }
+
+  Future<int?> playlistNext(
+      BuildContext context, int musicId, int playlistId) async {
+    final authState = context.read<AuthBloc>().state;
+    String? token;
+    if (authState is AuthAuthenticated) {
+      token = authState.token;
+    }
+    final uri = Uri.parse(
+        'http://192.168.0.102:8080/app/playlist/next/$musicId?playlistId=$playlistId');
+    final resp = await http.get(uri, headers: {
+      'Authorization': token != null ? 'Bearer $token' : '',
+      'Content-Type': 'application/json',
+    });
+    if (resp.statusCode == 200) {
+      final jsonResponse = jsonDecode(resp.body);
+      final nextId = jsonResponse['data']['music']?['id'];
+      if (nextId is int) return nextId;
+      if (nextId is String) return int.tryParse(nextId);
+    }
+    return null;
+  }
+
+  Future<int?> playlistRewind(
+      BuildContext context, int musicId, int playlistId) async {
+    final authState = context.read<AuthBloc>().state;
+    String? token;
+    if (authState is AuthAuthenticated) {
+      token = authState.token;
+    }
+    final uri = Uri.parse(
+        'http://192.168.0.102:8080/app/playlist/rewind/$musicId?playlistId=$playlistId');
+    final resp = await http.get(uri, headers: {
+      'Authorization': token != null ? 'Bearer $token' : '',
+      'Content-Type': 'application/json',
+    });
+    if (resp.statusCode == 200) {
+      final jsonResponse = jsonDecode(resp.body);
+      final prevId = jsonResponse['data']['music']?['id'];
+      if (prevId is int) return prevId;
+      if (prevId is String) return int.tryParse(prevId);
+    }
+    return null;
+  }
+
+  Future<int?> playlistPlay(
+      BuildContext context, int musicId, int playlistId) async {
+    final authState = context.read<AuthBloc>().state;
+    String? token;
+    if (authState is AuthAuthenticated) {
+      token = authState.token;
+    }
+    final uri = Uri.parse(
+        'http://192.168.0.102:8080/app/playlist/play/$musicId?playlistId=$playlistId');
+    final resp = await http.get(uri, headers: {
+      'Authorization': token != null ? 'Bearer $token' : '',
+      'Content-Type': 'application/json',
+    });
+    if (resp.statusCode == 200) {
+      final jsonResponse = jsonDecode(resp.body);
+      final playId = jsonResponse['data']['music']?['id'];
+      if (playId is int) return playId;
+      if (playId is String) return int.tryParse(playId);
+    }
+    return null;
+  }
 }

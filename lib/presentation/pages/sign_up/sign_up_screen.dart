@@ -1,9 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/presentation/widgets/spotify_logo.dart';
-//import 'package:spotify_clone/features/auth/presentation/widgets/sign_up_with.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({super.key});
+  SignUpScreen({Key? key}) : super(key: key);
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId:
+        '20138720257-umfd2bjsiqeetuuv367jbgcpc5s8cgs7.apps.googleusercontent.com',
+    scopes: ['email', 'profile'],
+  );
+
+  // Hàm xử lý đăng nhập và đăng ký với Google
+  Future<void> _handleGoogleSignIn(BuildContext context) async {
+    try {
+      // Đăng xuất Google nếu có tài khoản đang đăng nhập
+      await _googleSignIn.signOut();
+
+      // Yêu cầu người dùng đăng nhập bằng Google
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        // Nếu người dùng huỷ đăng nhập
+        return;
+      }
+
+      // Lấy thông tin authentication từ Google
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final String? idToken = googleAuth.idToken;
+
+      print("🟢 Google ID Token: $idToken"); // Log ra ID token
+
+      if (idToken == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Không lấy được idToken từ Google")),
+        );
+        return;
+      }
+
+      // Chuyển đến màn hình đăng ký với Google, truyền idToken
+      Navigator.pushNamed(
+        context,
+        '/signup_dob_gg', // Đổi thành đường dẫn bạn muốn khi đăng ký thành công
+        arguments: {'idToken': idToken}, // Truyền idToken vào màn hình sau
+      );
+    } catch (e) {
+      // Thông báo lỗi khi có sự cố trong quá trình đăng nhập
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Lỗi khi đăng nhập Google: $e")));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +131,7 @@ class SignUpScreen extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                // Logic cho "Continue with Google"
+                _handleGoogleSignIn(context); // Gọi hàm xử lý đăng nhập Google
               },
               icon: const Icon(Icons.g_mobiledata, color: Colors.white),
               label: const Text("Continue with Google"),
@@ -104,9 +152,6 @@ class SignUpScreen extends StatelessWidget {
               icon: const Icon(Icons.facebook, color: Colors.blue),
               label: const Text("Continue with Facebook"),
             ),
-            /*SignUpWith(
-                icon: const Icon(Icons.facebook, color: Colors.white),
-                label: "WIth"),*/
             const Spacer(),
             // TextButton cho "Already have an account? Log in"
             TextButton(

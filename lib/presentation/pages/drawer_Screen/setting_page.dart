@@ -46,7 +46,8 @@ class _SettingPageState extends State<SettingPage> {
         },
       );
 
-      print("📡 Server Response: ${response.statusCode}, ${response.body}"); // Debug response
+      print(
+          "📡 Server Response: ${response.statusCode}, ${response.body}"); // Debug response
 
       if (response.statusCode == 200) {
         print("✅ Đăng xuất thành công!");
@@ -55,10 +56,11 @@ class _SettingPageState extends State<SettingPage> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          MaterialPageRoute(builder: (context) => LoginScreen()),
         );
       } else {
-        print("❌ Lỗi khi đăng xuất! Status: ${response.statusCode}, Response: ${response.body}");
+        print(
+            "❌ Lỗi khi đăng xuất! Status: ${response.statusCode}, Response: ${response.body}");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Lỗi đăng xuất: ${response.body}"),
@@ -70,7 +72,6 @@ class _SettingPageState extends State<SettingPage> {
       print("❌ Lỗi đăng xuất: $e");
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -129,8 +130,10 @@ class _SettingPageState extends State<SettingPage> {
                 title: const Text('Tài khoản'),
                 subtitle: const Text('Tên người dùng'),
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const AccountPage()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AccountPage()));
                 },
               ),
               ListTile(
@@ -173,8 +176,10 @@ class _SettingPageState extends State<SettingPage> {
                 title: const Text('Giới thiệu'),
                 subtitle: const Text('Chính sách quyền riêng tư'),
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const AboutPage()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AboutPage()));
                 },
               )
             ],

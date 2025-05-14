@@ -66,7 +66,10 @@ class _DrawerViewState extends State<DrawerView> {
               title: Text(userName),
               subtitle: const Text('Xem hồ sơ'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProfileScreen()));
               },
             ),
             const Divider(color: Colors.white60, thickness: 0.2),
@@ -74,7 +77,8 @@ class _DrawerViewState extends State<DrawerView> {
               leading: const Icon(Icons.add_circle_outline_sharp),
               title: const Text('Thêm tài khoản'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()));
               },
             ),
             ListTile(
@@ -86,14 +90,20 @@ class _DrawerViewState extends State<DrawerView> {
               leading: const Icon(Icons.settings_backup_restore_sharp),
               title: const Text('Gần đây'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const RecentPlaysPage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const RecentPlaysPage()));
               },
             ),
             ListTile(
               leading: const Icon(Icons.settings_outlined),
               title: const Text('Cài đặt và quyền riêng tư'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingPage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SettingPage()));
               },
             )
           ],

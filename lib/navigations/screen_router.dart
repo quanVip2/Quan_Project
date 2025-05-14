@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/navigations/splash_screen.dart';
+import 'package:untitled/presentation/pages/sign_up/step_dob_gg.dart';
+import 'package:untitled/presentation/pages/sign_up/step_gender_gg.dart';
+import 'package:untitled/presentation/pages/sign_up/step_name_gg.dart';
 import 'package:untitled/presentation/pages/start_screen.dart';
 import 'package:untitled/presentation/pages/sign_up/sign_up_screen.dart';
 import 'package:untitled/presentation/pages/login/login_screen.dart';
@@ -10,7 +13,6 @@ import 'package:untitled/presentation/pages/sign_up/step_dob.dart';
 import 'package:untitled/presentation/pages/sign_up/step_gender.dart';
 import 'package:untitled/presentation/pages/sign_up/step_name.dart';
 import 'package:untitled/presentation/pages/forgot-password/ForgotPasswordFlow.dart';
-
 
 import '../navigations/tabbar.dart';
 
@@ -25,9 +27,11 @@ class AppRouter {
   static const String signUpDob = '/signup_dob';
   static const String signUpGender = '/signup_gender';
   static const String signUpName = '/signup_name';
+  static const String signUpDobGG = '/signup_dob_gg';
+  static const String signUpGenderGG = '/signup_gender_gg';
+  static const String signUpNameGG = '/signup_name_gg';
   static const String home = '/home';
   static const String forgotPassword = '/forgot-password';
-
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -36,9 +40,9 @@ class AppRouter {
       case start:
         return MaterialPageRoute(builder: (_) => const StartScreen());
       case signUp:
-        return MaterialPageRoute(builder: (_) => const SignUpScreen());
+        return MaterialPageRoute(builder: (_) => SignUpScreen());
       case login:
-        return MaterialPageRoute(builder: (_) => const LoginScreen());
+        return MaterialPageRoute(builder: (_) => LoginScreen());
       case loginEmail:
         return MaterialPageRoute(builder: (_) => const LoginEmailScreen());
       case signUpEmail:
@@ -46,9 +50,32 @@ class AppRouter {
       case signUpPassword:
         return MaterialPageRoute(builder: (_) => const SignUpPasswordScreen());
       case signUpDob:
-        return MaterialPageRoute(builder: (_) => const SignUpDateOfBirthScreen());
+        return MaterialPageRoute(
+            builder: (_) => const SignUpDateOfBirthScreen());
+
       case signUpGender:
         return MaterialPageRoute(builder: (_) => const SignUpGenderScreen());
+      case signUpDobGG:
+        final args = settings.arguments as Map<String, dynamic>?;
+        final idToken = args?['idToken'] as String? ?? '';
+        return MaterialPageRoute(
+          builder: (_) => SignUpDateOfBirthScreenGG(idToken: idToken),
+        );
+
+      case signUpGenderGG:
+        final args = settings.arguments as Map<String, dynamic>?;
+        final idToken = args?['idToken'] as String? ?? '';
+        return MaterialPageRoute(
+          builder: (_) => SignUpGenderScreenGG(idToken: idToken),
+        );
+
+      case signUpNameGG:
+        final args = settings.arguments as Map<String, dynamic>?;
+        final idToken = args?['idToken'] as String? ?? '';
+        return MaterialPageRoute(
+          builder: (_) => SignUpNameScreenGG(idToken: idToken),
+        );
+
       case signUpName:
         return MaterialPageRoute(builder: (_) => const SignUpNameScreen());
       case home:

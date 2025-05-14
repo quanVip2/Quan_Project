@@ -1,7 +1,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- The INTERNET permission is required for development. Specifically,
-         the Flutter tool needs it to communicate with the running application
-         to allow setting breakpoints, to provide hot reload, etc.
-    -->
+    <!-- Permission for internet access -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application
+        android:label="kiin"
+        android:icon="@mipmap/ic_launcher">
+        
+        <!-- Configure Google Sign-In API Key -->
+        <meta-data
+            android:name="com.google.android.gms.auth.api.signin.API_KEY"
+            android:value="AIzaSyC-x0AcYNRya9AuuHSQiEGZWspJibwCOic"/>
+
+        <!-- Required to configure Google Sign-In -->
+        <activity
+            android:name="com.google.android.gms.auth.api.signin.GoogleSignInActivity"
+            android:label="Google Sign In"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+    </application>
 </manifest>

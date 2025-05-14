@@ -62,7 +62,7 @@ class LibraryPageState extends State<LibraryPage> {
           playlistId: playlist.id,
           playlistName: playlist.name,
           ownerName: playlist.userId, 
-          imageUrl: null, 
+          imageUrl: playlist.imageUrl, 
           description: playlist.description,
         ),
       ),

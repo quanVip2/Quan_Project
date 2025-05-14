@@ -20,7 +20,8 @@ import '../../features/bloc/auth_state.dart';
 
 class MusicPlayerPage extends StatefulWidget {
   final int musicId;
-  const MusicPlayerPage({super.key, required this.musicId});
+  final int? playlistId;
+  const MusicPlayerPage({super.key, required this.musicId, this.playlistId});
 
   @override
   State<MusicPlayerPage> createState() => _MusicPlayerPageState();
@@ -108,7 +109,8 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
         token = authState.token;
       }
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8080/app/like-music/get-music-from-like-music'),
+        Uri.parse(
+            'http://10.0.2.2:8080/app/like-music/get-music-from-like-music'),
         headers: {
           'Authorization': token != null ? 'Bearer $token' : '',
           'Content-Type': 'application/json',
@@ -252,12 +254,10 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                     inactiveColor: Colors.white24,
                     min: 0,
                     max: total.inSeconds.toDouble(),
-                    value: position.inSeconds
-                        .clamp(0, total.inSeconds)
-                        .toDouble(),
+                    value:
+                        position.inSeconds.clamp(0, total.inSeconds).toDouble(),
                     onChanged: (value) {
-                      controller.player
-                          .seek(Duration(seconds: value.toInt()));
+                      controller.player.seek(Duration(seconds: value.toInt()));
                     },
                   ),
                   Padding(
@@ -266,11 +266,9 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(_formatDuration(position),
-                            style:
-                                const TextStyle(color: Colors.white70)),
+                            style: const TextStyle(color: Colors.white70)),
                         Text(_formatDuration(total),
-                            style:
-                                const TextStyle(color: Colors.white70)),
+                            style: const TextStyle(color: Colors.white70)),
                       ],
                     ),
                   ),
@@ -284,15 +282,8 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
             children: [
               IconButton(
                 iconSize: 40,
-                icon:
-                    const Icon(Icons.skip_previous, color: Colors.white),
-                onPressed: () {
-                  controller.playRewindMusic(context, (newMusic) {
-                    setState(() {
-                      music = newMusic;
-                    });
-                  });
-                },
+                icon: const Icon(Icons.skip_previous, color: Colors.white),
+                onPressed: _playRewind,
               ),
               StreamBuilder<PlayerState>(
                 stream: controller.player.playerStateStream,
@@ -317,13 +308,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
               IconButton(
                 iconSize: 40,
                 icon: const Icon(Icons.skip_next, color: Colors.white),
-                onPressed: () {
-                  controller.playNextMusic(context, (newMusic) {
-                    setState(() {
-                      music = newMusic;
-                    });
-                  });
-                },
+                onPressed: _playNext,
               ),
             ],
           ),
@@ -343,8 +328,9 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
 
     final playlistRepository = PlaylistRepository();
     try {
-      final playlists = await playlistRepository.getPlaylistsByUserId(context, "current_user");
-      
+      final playlists = await playlistRepository.getPlaylistsByUserId(
+          context, "current_user");
+
       if (!mounted) return;
 
       showDialog(
@@ -375,7 +361,8 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                             if (!mounted) return;
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Đã thêm vào playlist thành công'),
+                                content:
+                                    Text('Đã thêm vào playlist thành công'),
                                 backgroundColor: Colors.green,
                               ),
                             );
@@ -383,7 +370,8 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                             if (!mounted) return;
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Không thể thêm vào playlist: $e'),
+                                content:
+                                    Text('Không thể thêm vào playlist: $e'),
                                 backgroundColor: Colors.red,
                               ),
                             );
@@ -416,5 +404,59 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
     final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
     final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
     return '$minutes:$seconds';
+  }
+
+  Future<void> _playNext() async {
+    if (widget.playlistId != null) {
+      // Gọi API playlist/next với id bài hát hiện tại và playlistId
+      final repo = PlaylistRepository();
+      final nextMusicId =
+          await repo.playlistNext(context, music!.id, widget.playlistId!);
+      if (nextMusicId != null) {
+        setState(() {
+          isLoading = true;
+        });
+        final result =
+            await MusicService().fetchMusicDetail(context, nextMusicId);
+        setState(() {
+          music = result;
+          isLoading = false;
+        });
+        await controller.setCurrentTrack(result);
+      }
+    } else {
+      controller.playNextMusic(context, (newMusic) {
+        setState(() {
+          music = newMusic;
+        });
+      });
+    }
+  }
+
+  Future<void> _playRewind() async {
+    if (widget.playlistId != null) {
+      // Gọi API playlist/rewind với id bài hát hiện tại và playlistId
+      final repo = PlaylistRepository();
+      final prevMusicId =
+          await repo.playlistRewind(context, music!.id, widget.playlistId!);
+      if (prevMusicId != null) {
+        setState(() {
+          isLoading = true;
+        });
+        final result =
+            await MusicService().fetchMusicDetail(context, prevMusicId);
+        setState(() {
+          music = result;
+          isLoading = false;
+        });
+        await controller.setCurrentTrack(result);
+      }
+    } else {
+      controller.playRewindMusic(context, (newMusic) {
+        setState(() {
+          music = newMusic;
+        });
+      });
+    }
   }
 }

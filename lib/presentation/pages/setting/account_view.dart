@@ -30,7 +30,7 @@ class _AccountPageState extends State<AccountPage> {
       return;
     }
 
-    const String apiUrl = "http://10.0.2.2:8080/app/auth/profile";
+    const String apiUrl = "http://192.168.0.102:8080/app/auth/profile";
 
     try {
       final response = await http.get(
@@ -87,7 +87,8 @@ class _AccountPageState extends State<AccountPage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const EditProfileScreen()),
                 );
               },
               child: _buildInfoRowWithArrow('Email', userEmail),
@@ -107,8 +108,10 @@ class _AccountPageState extends State<AccountPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: const TextStyle(fontSize: 14, color: Colors.white70)),
-        Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        Text(title,
+            style: const TextStyle(fontSize: 14, color: Colors.white70)),
+        Text(value,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
       ],
     );
@@ -121,8 +124,11 @@ class _AccountPageState extends State<AccountPage> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontSize: 14, color: Colors.white70)),
-            Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(title,
+                style: const TextStyle(fontSize: 14, color: Colors.white70)),
+            Text(value,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ],
         ),
         const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white70),
@@ -141,7 +147,8 @@ class _AccountPageState extends State<AccountPage> {
         children: [
           Image.asset('assets/image/melodi_logo.png', width: 50, height: 50),
           const SizedBox(width: 12),
-          const Text('MelodiFlow Free', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const Text('MelodiFlow Free',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -164,9 +171,12 @@ class _AccountPageState extends State<AccountPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Các gói Premium', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text('Các gói Premium',
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 SizedBox(height: 4),
-                Text('Tận hưởng trải nghiệm nghe nhạc tuyệt vời và nhiều lợi ích', 
+                Text(
+                    'Tận hưởng trải nghiệm nghe nhạc tuyệt vời và nhiều lợi ích',
                     style: TextStyle(fontSize: 12, color: Colors.white70)),
               ],
             ),

@@ -1,7 +1,101 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:dio/dio.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  LoginScreen({super.key});
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId:
+        '20138720257-umfd2bjsiqeetuuv367jbgcpc5s8cgs7.apps.googleusercontent.com',
+    scopes: ['email', 'profile'],
+  );
+
+  // Dio instance
+  final Dio dio = Dio();
+
+  // Hàm đăng nhập với Google và gọi API
+  Future<Map<String, dynamic>> loginWithGoogle({
+    required String idToken,
+  }) async {
+    final url =
+        'http://192.168.0.102:8080/app/auth/login-google'; // Thay bằng URL thực tế của API đăng nhập Google
+    try {
+      final response = await dio.post(url, data: {'idToken': idToken});
+
+      final data = response.data;
+
+      if (response.statusCode == 200 && data['status_code'] == 200) {
+        final result = data['data'];
+
+        if (result == null) {
+          throw Exception('data không có trong phản hồi');
+        }
+
+        final token = result['token'];
+
+        if (token == null) {
+          throw Exception('token không có trong phản hồi');
+        }
+
+        final Map<String, dynamic> safeResult = {
+          'token': token.toString(),
+          'message': data['message'] != null
+              ? data['message'].toString()
+              : 'Đăng nhập Google thành công!',
+        };
+
+        return safeResult;
+      } else {
+        throw Exception(data['message'] ?? 'Đăng nhập Google thất bại');
+      }
+    } on DioException catch (e) {
+      final message =
+          e.response?.data['message'] ?? 'Lỗi không xác định từ server';
+      throw Exception(message);
+    } catch (e) {
+      throw Exception('Đăng nhập Google thất bại: $e');
+    }
+  }
+
+  // Hàm xử lý đăng nhập với Google
+  Future<void> _signInWithGoogle(BuildContext context) async {
+    try {
+      // Đăng nhập Google
+      final GoogleSignInAccount? user = await _googleSignIn.signIn();
+
+      if (user != null) {
+        // Lấy token từ Google
+        final GoogleSignInAuthentication googleAuth = await user.authentication;
+        final idToken = googleAuth.idToken;
+
+        if (idToken == null) {
+          throw Exception('Không thể lấy ID token từ Google');
+        }
+
+        // Gọi API đăng nhập Google
+        final result = await loginWithGoogle(idToken: idToken);
+
+        final token = result['token'];
+
+        // Lưu token hoặc xử lý sau khi đăng nhập thành công
+        print('Token đăng nhập: $token');
+
+        // Điều hướng tới màn hình chính hoặc nơi cần thiết
+        Navigator.pushNamed(context, '/home'); // Điều hướng tới màn hình chính
+      } else {
+        // Người dùng hủy đăng nhập
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Đăng nhập Google bị hủy")),
+        );
+      }
+    } catch (e) {
+      // Xử lý lỗi
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Lỗi: ${e.toString()}")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +180,7 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                // Logic cho "Continue with Google"
+                _signInWithGoogle(context); // Gọi hàm đăng nhập với Google
               },
               icon: const Icon(Icons.g_mobiledata, color: Colors.white),
               label: const Text("Continue with Google"),

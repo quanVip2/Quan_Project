@@ -55,37 +55,83 @@ class SignUpProvider extends ChangeNotifier {
   }
 
   Future<bool> registerUser() async {
-  final url = Uri.parse("http://10.0.2.2:8080/auth/register");
-  try {
-    final response = await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        "email": _email,
-        "password": _password,
-        "birthday": _dateOfBirth, // lưu giá trị birthday ở đây
-        "gender": _gender,
-        "fullName": _name,
-        "userName": _name, // Nếu không có trường riêng cho userName, bạn có thể dùng _name hoặc thêm trường mới vào provider
-      }),
-    );
+    final url = Uri.parse("http://192.168.0.102:8080/app/auth/register");
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "email": _email,
+          "password": _password,
+          "birthday": _dateOfBirth, // lưu giá trị birthday ở đây
+          "gender": _gender,
+          "fullName": _name,
+          "userName":
+              _name, // Nếu không có trường riêng cho userName, bạn có thể dùng _name hoặc thêm trường mới vào provider
+        }),
+      );
 
-    final responseData = jsonDecode(response.body);
+      final responseData = jsonDecode(response.body);
 
-    print("Phản hồi từ backend: ${response.statusCode}");
-    print("Nội dung body: $responseData");
+      print("Phản hồi từ backend: ${response.statusCode}");
+      print("Nội dung body: $responseData");
 
-    // Kiểm tra nếu status_code == 200 và message == "success"
-    if (response.statusCode == 200 && responseData['status_code'] == 200 && responseData['message'] == "success") {
-      return true;
-    } else {
-      print("Đăng ký thất bại: ${responseData['message']}");
+      if (response.statusCode == 200 &&
+          responseData['status_code'] == 200 &&
+          responseData['message'] == "success") {
+        return true;
+      } else {
+        print("Đăng ký thất bại: ${responseData['message']}");
+        return false;
+      }
+    } catch (e) {
+      print("Lỗi trong `registerUser()`: $e");
       return false;
     }
-  } catch (e) {
-    print("Lỗi trong `registerUser()`: $e");
-    return false;
   }
-}
 
+  Future<Map<String, dynamic>> registerWithGoogle({
+    required String idToken,
+    required String userName,
+    required String birthday,
+    required String gender,
+  }) async {
+    final url = "http://192.168.0.102:8080/app/auth/register-google";
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'idToken': idToken,
+          'userName': userName,
+          'birthday': birthday,
+          'gender': gender,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['status_code'] == 200) {
+        final result = data['data'];
+        final userResponse = result['user'];
+        final token = result['token'];
+
+        if (userResponse == null || token == null) {
+          throw Exception('User hoặc token không có trong phản hồi');
+        }
+
+        // Trả về dữ liệu bao gồm user, token và message
+        return {
+          'user': userResponse,
+          'token': token,
+          'message': data['message'] ?? 'Đăng ký Google thành công!',
+        };
+      } else {
+        throw Exception(data['message'] ?? 'Đăng ký Google thất bại');
+      }
+    } catch (e) {
+      throw Exception('Đăng ký Google thất bại: $e');
+    }
+  }
 }
